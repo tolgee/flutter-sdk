@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tolgee/accessibility/accessibility_tools.dart';
+import 'package:tolgee/tolgee_sdk.dart';
+import 'package:tolgee/translation_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: context.tolgee.currentLanguage,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -24,7 +27,14 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: AccessibilityTools(
+        child: TranslationWidget(
+          builder: (context, tr) => MyHomePage(
+            title: tr('title'),
+          ),
+        ),
+        minimumTapAreas: MinimumTapAreas(mobile: 200, desktop: 200),
+      ),
     );
   }
 }
