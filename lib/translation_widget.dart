@@ -82,7 +82,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
             return translations
                 .firstWhere(
                   (element) => element.key == key,
-                  orElse: () => TranslationModel(key: key, value: 'not found'),
+                  orElse: () => TranslationModel(key: key, value: key),
                 )
                 .value;
           },

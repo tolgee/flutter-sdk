@@ -4,6 +4,7 @@ import 'package:tolgee/tolgee_sdk.dart';
 import 'package:tolgee/translation_widget.dart';
 
 void main() {
+  TolgeeSdk.init();
   runApp(const MyApp());
 }
 
