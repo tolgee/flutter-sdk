@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:tolgee/tolgee_sdk.dart';
 
 class TranslationModel {
   final String key;
@@ -47,27 +48,46 @@ class TranslationWidget extends StatefulWidget {
 class _TranslationWidgetState extends State<TranslationWidget> {
   List<TranslationModel> translations = [
     TranslationModel(key: 'key', value: 'value'),
+    TranslationModel(key: 'title', value: 'App Title'),
+    TranslationModel(key: 'title2', value: 'App Title 2'),
   ];
 
-  bool isTranslationEnabled = false;
+  bool isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
 
   @override
   Widget build(BuildContext context) {
-    if (isTranslationEnabled) {
-      return Container(
+    final backgroundColor = isTranslationEnabled ? Colors.red : null;
+
+    final onTap = isTranslationEnabled
+        ? () {
+            setState(() {
+              isTranslationEnabled = TolgeeSdk.instance
+                  .mutateTranslationEnabled(!isTranslationEnabled);
+            });
+          }
+        : () {
+            setState(() {
+              isTranslationEnabled = TolgeeSdk.instance
+                  .mutateTranslationEnabled(!isTranslationEnabled);
+            });
+          };
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        color: backgroundColor,
         child: widget.builder(
           context,
           (key) {
             return translations
                 .firstWhere(
                   (element) => element.key == key,
-                  orElse: () => TranslationModel(key: key, value: key),
+                  orElse: () => TranslationModel(key: key, value: 'not found'),
                 )
                 .value;
           },
         ),
-      );
-    }
-    return Text('data');
+      ),
+    );
   }
 }
