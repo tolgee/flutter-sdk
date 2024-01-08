@@ -3,8 +3,8 @@ import 'package:tolgee/accessibility/accessibility_tools.dart';
 import 'package:tolgee/tolgee_sdk.dart';
 import 'package:tolgee/translation_widget.dart';
 
-void main() {
-  TolgeeSdk.init();
+Future<void> main() async {
+  await TolgeeSdk.init();
   runApp(const MyApp());
 }
 
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             TranslationWidget(
               builder: (context, tr) => Text(
-                tr('title2'),
+                tr('title'),
               ),
             ),
             const Text(

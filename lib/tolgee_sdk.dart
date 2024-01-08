@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 
@@ -81,6 +82,27 @@ class TolgeeSdk {
     _isTranslationEnabled = !_isTranslationEnabled;
   }
 
+  List<TolgeeKeyModel> _translations = [];
+
+  String translate(String key) {
+    if (!_isTranslationEnabled) {
+      return key;
+    }
+    final value = _translations.firstWhereOrNull(
+      (element) => element.keyName == key,
+    );
+    if (value == null) {
+      return key;
+    }
+
+    final translation = value.translations[currentLanguage];
+    if (translation == null) {
+      return key;
+    }
+
+    return translation.text;
+  }
+
   static final instance = TolgeeSdk._();
   TolgeeSdk._();
 
@@ -96,6 +118,7 @@ class TolgeeSdk {
     print('TolgeeSdk initialized');
     final body = TolgeeTranslationsResponse.fromJsonString(response.body);
     print('jsonBody: $jsonBody');
+    TolgeeSdk.instance._translations = body.keys;
   }
 }
 

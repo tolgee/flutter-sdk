@@ -46,12 +46,6 @@ class TranslationWidget extends StatefulWidget {
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
-  List<TranslationModel> translations = [
-    TranslationModel(key: 'key', value: 'value'),
-    TranslationModel(key: 'title', value: 'App Title'),
-    TranslationModel(key: 'title2', value: 'App Title 2'),
-  ];
-
   bool isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
 
   @override
@@ -79,12 +73,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
         child: widget.builder(
           context,
           (key) {
-            return translations
-                .firstWhere(
-                  (element) => element.key == key,
-                  orElse: () => TranslationModel(key: key, value: key),
-                )
-                .value;
+            return context.tolgee.translate(key);
           },
         ),
       ),
