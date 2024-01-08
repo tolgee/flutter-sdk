@@ -63,6 +63,18 @@ class TolgeeSdk {
     print('jsonBody: $translations');
     TolgeeSdk.instance._translations = translations.keys;
   }
+
+  static Future<void> updateTranslation({
+    required String key,
+    required String value,
+  }) async {
+    await TolgeeApi.updateTranslation(
+      config: instance._config!,
+      key: key,
+      language: instance.currentLanguage,
+      value: value,
+    );
+  }
 }
 
 extension Tolgee on BuildContext {
