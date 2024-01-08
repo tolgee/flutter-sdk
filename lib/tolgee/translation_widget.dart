@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tolgee/tolgee_sdk.dart';
+import 'package:tolgee/tolgee/tolgee_sdk.dart';
 
 class TranslationModel {
   final String key;

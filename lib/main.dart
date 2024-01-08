@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/accessibility/accessibility_tools.dart';
-import 'package:tolgee/tolgee_sdk.dart';
-import 'package:tolgee/translation_widget.dart';
+import 'package:tolgee/tolgee/tolgee_sdk.dart';
+import 'package:tolgee/tolgee/translation_widget.dart';
 
 Future<void> main() async {
-  await TolgeeSdk.init();
+  await TolgeeSdk.init(
+    apiKey: 'tgpak_gm4tqok7nzzw2ylgoy2ds4lwgjvwq43rgvqxa33wgfzxeolwge',
+    apiUrl: 'https://app.tolgee.io/v2',
+  );
   runApp(const MyApp());
 }
 
