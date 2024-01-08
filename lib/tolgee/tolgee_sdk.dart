@@ -67,5 +67,4 @@ class TolgeeSdk {
 
 extension Tolgee on BuildContext {
   TolgeeSdk get tolgee => TolgeeSdk.instance;
-  // TolgeeSdk get tolgee => watch<TolgeeSdk>();
 }
