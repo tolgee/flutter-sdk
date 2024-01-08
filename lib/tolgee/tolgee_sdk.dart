@@ -4,7 +4,7 @@ import 'package:tolgee/tolgee/api/tolgee_api.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
 import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
 
-class TolgeeSdk {
+class TolgeeSdk extends ChangeNotifier {
   TolgeeConfig? _config;
 
   String get currentLanguage => 'en';
@@ -13,15 +13,18 @@ class TolgeeSdk {
   bool get isTranslationEnabled => _isTranslationEnabled;
   bool mutateTranslationEnabled(bool value) {
     _isTranslationEnabled = value;
+    notifyListeners();
     return _isTranslationEnabled;
   }
 
   void setTranslationEnabled(bool value) {
     _isTranslationEnabled = value;
+    notifyListeners();
   }
 
   void toggleTranslationEnabled() {
     _isTranslationEnabled = !_isTranslationEnabled;
+    notifyListeners();
   }
 
   List<TolgeeKeyModel> _translations = [];
@@ -62,6 +65,7 @@ class TolgeeSdk {
 
     print('jsonBody: $translations');
     TolgeeSdk.instance._translations = translations.keys;
+    TolgeeSdk.instance.notifyListeners();
   }
 
   static Future<void> updateTranslation({
@@ -73,6 +77,11 @@ class TolgeeSdk {
       key: key,
       language: instance.currentLanguage,
       value: value,
+    );
+
+    await TolgeeSdk.init(
+      apiKey: instance._config!.apiKey,
+      apiUrl: instance._config!.apiUrl,
     );
   }
 }

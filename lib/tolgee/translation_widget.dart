@@ -19,37 +19,36 @@ class TranslationWidget extends StatefulWidget {
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
-  bool isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
-
   @override
   Widget build(BuildContext context) {
+    final isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
     final backgroundColor = isTranslationEnabled ? Colors.red : null;
 
     final onTap = isTranslationEnabled
         ? () {
             setState(() {
-              isTranslationEnabled = TolgeeSdk.instance
-                  .mutateTranslationEnabled(!isTranslationEnabled);
+              TolgeeSdk.instance.toggleTranslationEnabled();
             });
           }
         : () {
             setState(() {
-              isTranslationEnabled = TolgeeSdk.instance
-                  .mutateTranslationEnabled(!isTranslationEnabled);
+              TolgeeSdk.instance.toggleTranslationEnabled();
             });
           };
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        color: backgroundColor,
-        child: widget.builder(
-          context,
-          (key) {
-            return context.tolgee.translate(key);
-          },
-        ),
-      ),
-    );
+    return ListenableBuilder(
+        listenable: TolgeeSdk.instance,
+        builder: (BuildContext context, Widget? child) {
+          return GestureDetector(
+            onTap: onTap,
+            child: Container(
+              color: backgroundColor,
+              child: widget.builder(
+                context,
+                TolgeeSdk.instance.translate,
+              ),
+            ),
+          );
+        });
   }
 }
