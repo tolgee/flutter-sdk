@@ -15,7 +15,7 @@ class TolgeeTranslationsResponse {
       final keyName = key['keyName'] as String;
       final translations = key['translations'] as Map<String, dynamic>;
       final translationsModels = translations.map((key, value) {
-        return MapEntry(key, TolgeeTranslationModel(value['text']));
+        return MapEntry(key, TolgeeTranslationModel(text: value['text']));
       });
       return TolgeeKeyModel(
         keyName: keyName,

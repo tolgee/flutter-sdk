@@ -88,11 +88,12 @@ class TolgeeSdk extends ChangeNotifier {
   static Future<void> updateTranslation({
     required String key,
     required String value,
+    required String language,
   }) async {
     await TolgeeApi.updateTranslation(
       config: instance._config!,
       key: key,
-      language: instance.currentLanguage,
+      language: language,
       value: value,
     );
 

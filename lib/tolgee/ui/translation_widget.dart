@@ -37,8 +37,9 @@ class _TranslationWidgetState extends State<TranslationWidget> {
                       context: context,
                       builder: (context) {
                         return TranslationPopUp(
-                          translationModels:
-                              TolgeeSdk.instance.translationForKeys(_keys),
+                          translationModel: TolgeeSdk.instance
+                              .translationForKeys(_keys)
+                              .first,
                         );
                       });
                 }

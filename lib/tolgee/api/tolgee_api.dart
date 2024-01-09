@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
 import 'package:tolgee/tolgee/api/tolgee_translations_response.dart';
@@ -24,17 +26,22 @@ class TolgeeApi {
     required String language,
     required String value,
   }) async {
+    final bodyMap = {
+      'key': key,
+      'translations': {
+        language: value,
+      },
+    };
+
+    final body = jsonEncode(bodyMap);
+
     final response = await post(
       Uri.parse('${config.apiUrl}/projects/translations'),
       headers: {
         'X-Api-Key': config.apiKey,
+        'Content-Type': 'application/json',
       },
-      body: {
-        'key': key,
-        'translations': {
-          language: value,
-        },
-      },
+      body: body,
     );
     print(response.body);
   }

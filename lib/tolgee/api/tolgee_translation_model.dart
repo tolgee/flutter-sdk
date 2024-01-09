@@ -2,7 +2,10 @@ class TolgeeTranslationModel {
   // final String id;
   final String text;
 
-  const TolgeeTranslationModel(this.text);
+  const TolgeeTranslationModel({
+    // required this.id,
+    required this.text,
+  });
 // final String state;
 // final String outdated;
 // final String auto;
