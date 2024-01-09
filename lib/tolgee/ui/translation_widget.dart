@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
+import 'package:tolgee/tolgee/ui/translation_pop_up.dart';
 
 typedef TranslationGetter = String Function(String key);
 typedef TranslatedWidgetBuilder = Widget Function(
@@ -19,6 +20,8 @@ class TranslationWidget extends StatefulWidget {
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
+  List<String> _keys = [];
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -29,23 +32,31 @@ class _TranslationWidgetState extends State<TranslationWidget> {
 
           final onTap = isTranslationEnabled
               ? () {
-                  setState(() {
-                    TolgeeSdk.instance.toggleTranslationEnabled();
-                  });
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return TranslationPopUp(
+                          translationModels:
+                              TolgeeSdk.instance.translationForKeys(_keys),
+                        );
+                      });
                 }
-              : () {
-                  setState(() {
-                    TolgeeSdk.instance.toggleTranslationEnabled();
-                  });
-                };
+              : null;
 
-          return GestureDetector(
-            onTap: onTap,
-            child: Container(
-              color: backgroundColor,
-              child: widget.builder(
-                context,
-                TolgeeSdk.instance.translate,
+          return Container(
+            color: backgroundColor,
+            child: GestureDetector(
+              onTap: onTap,
+              behavior: HitTestBehavior.deferToChild,
+              child: AbsorbPointer(
+                absorbing: true,
+                child: widget.builder(
+                  context,
+                  (key) {
+                    _keys.add(key);
+                    return TolgeeSdk.instance.translate(key);
+                  },
+                ),
               ),
             ),
           );
