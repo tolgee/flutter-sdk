@@ -23,9 +23,23 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
           final model = widget.translationModels[index];
           return ListTile(
             title: Text(model.keyName),
+            subtitle: Text(model.userFriendlyTranslations()),
           );
         },
       ),
     );
+  }
+}
+
+extension TolgeeKeyModelExtension on TolgeeKeyModel {
+  String userFriendlyTranslations() {
+    if (this.translations.isEmpty) {
+      return 'Not translated yet';
+    }
+    return this
+        .translations
+        .entries
+        .map((e) => '${e.key}: ${e.value.text}')
+        .join('\n');
   }
 }

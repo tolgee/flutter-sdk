@@ -21,6 +21,7 @@ class TranslationWidget extends StatefulWidget {
 
 class _TranslationWidgetState extends State<TranslationWidget> {
   List<String> _keys = [];
+  Color? _backgroundColor;
 
   @override
   Widget build(BuildContext context) {
