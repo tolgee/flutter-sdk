@@ -34,9 +34,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               Divider(),
-              Text(
-                'Translation state: ${TolgeeSdk.instance.isTranslationEnabled}',
-              ),
               TranslationWidget(builder: (context, tr) {
                 return OutlinedButton(
                   onPressed: () {},
