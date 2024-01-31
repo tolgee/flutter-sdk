@@ -8,13 +8,13 @@ import 'package:tolgee/tolgee/utils/tolgee_translation_model_extension.dart';
 /// Pop-up widget that displays a list of [TolgeeKeyModel]s.
 class TranslationListPopUp extends StatefulWidget {
   /// List of [TolgeeKeyModel]s to be displayed in the pop-up.
-  final List<TolgeeKeyModel> translationModels;
+  List<TolgeeKeyModel> _translationModels;
 
   /// Creates a new [TranslationListPopUp] widget.
-  const TranslationListPopUp({
+  TranslationListPopUp({
     super.key,
-    required this.translationModels,
-  });
+    required List<TolgeeKeyModel> translationModels,
+  }) : this._translationModels = translationModels;
 
   @override
   _TranslationListPopUpState createState() => _TranslationListPopUpState();
@@ -34,12 +34,17 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
       ),
       body: Material(
         child: ListView.builder(
-          itemCount: widget.translationModels.length,
+          itemCount: widget._translationModels.length,
           itemBuilder: (context, index) {
-            final model = widget.translationModels[index];
+            final model = widget._translationModels[index];
             return TranslationListTile(
               model: model,
               allProjectLanguages: allProjectLanguages,
+              onTranslationChanged: (model) {
+                setState(() {
+                  widget._translationModels[index] = model;
+                });
+              },
             );
           },
         ),
@@ -51,11 +56,13 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
 class TranslationListTile extends StatelessWidget {
   final TolgeeKeyModel model;
   final Map<String, TolgeeProjectLanguage> allProjectLanguages;
+  final ValueChanged<TolgeeKeyModel> onTranslationChanged;
 
   const TranslationListTile({
     Key? key,
     required this.model,
     required this.allProjectLanguages,
+    required this.onTranslationChanged,
   }) : super(key: key);
 
   @override
@@ -68,8 +75,8 @@ class TranslationListTile extends StatelessWidget {
           Text(model.userFriendlyTranslations(languages: allProjectLanguages)),
         ],
       ),
-      onTap: () {
-        Navigator.of(context).push(
+      onTap: () async {
+        final result = await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
               return TranslationPopUp(
@@ -77,7 +84,10 @@ class TranslationListTile extends StatelessWidget {
               );
             },
           ),
-        );
+        ) as TolgeeKeyModel?;
+        if (result != null) {
+          onTranslationChanged(result);
+        }
       },
     );
   }
