@@ -18,6 +18,7 @@ class TranslationPopUp extends StatefulWidget {
 
 class _TranslationPopUpState extends State<TranslationPopUp> {
   TolgeeKeyModel model;
+  bool isLoading = false;
 
   _TranslationPopUpState(this.model);
 
@@ -32,51 +33,57 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text('Key name: '),
-              Text(
-                model.keyName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          Divider(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: model.translations.length,
-              itemBuilder: (context, index) {
-                final entry = model.translations.entries.elementAt(index);
-                return TranslationTextField(
-                  text: entry.value.text,
-                  languageCode: entry.key,
-                  onTextChange: (text) {
-                    updateTranslationForKey(
-                      languageCode: entry.key,
-                      text: text,
-                    );
-                  },
-                );
-              },
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(
+              model.keyName,
             ),
-          ),
-          FilledButton(
-              onPressed: () async {
-                await TolgeeSdk.updateTranslation(
-                  key: model.keyName,
-                  value: model.translations.values.first.text,
-                  language: model.translations.keys.first,
-                );
-                Navigator.of(context).pop(model);
-              },
-              child: Text('Save')),
-        ],
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: model.translations.length,
+                itemBuilder: (context, index) {
+                  final entry = model.translations.entries.elementAt(index);
+                  return TranslationTextField(
+                    text: entry.value.text,
+                    languageCode: entry.key,
+                    onTextChange: (text) {
+                      updateTranslationForKey(
+                        languageCode: entry.key,
+                        text: text,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            if (isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+            if (!isLoading)
+              FilledButton(
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await TolgeeSdk.updateTranslation(
+                      key: model.keyName,
+                      value: model.translations.values.first.text,
+                      language: model.translations.keys.first,
+                    );
+                    Navigator.of(context).pop(model);
+                  },
+                  child: Text('Save')),
+          ],
+        ),
       ),
     );
   }

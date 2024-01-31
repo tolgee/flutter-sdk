@@ -20,7 +20,7 @@ class TranslationWidget extends StatefulWidget {
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
-  List<String> _keys = [];
+  Set<String> _keys = {};
   Color? _backgroundColor;
 
   @override
@@ -33,13 +33,16 @@ class _TranslationWidgetState extends State<TranslationWidget> {
 
           final onTap = isTranslationEnabled
               ? () {
-                  showModalBottomSheet(
-                      context: context,
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
                       builder: (context) {
                         return TranslationListPopUp(
-                            translationModels:
-                                TolgeeSdk.instance.translationForKeys(_keys));
-                      });
+                            translationModels: TolgeeSdk.instance
+                                .translationForKeys(_keys)
+                                .toList());
+                      },
+                    ),
+                  );
                 }
               : null;
 

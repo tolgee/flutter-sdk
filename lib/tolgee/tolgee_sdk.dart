@@ -68,13 +68,13 @@ class TolgeeSdk extends ChangeNotifier {
     TolgeeSdk.instance.notifyListeners();
   }
 
-  List<TolgeeKeyModel> translationForKeys(List<String> keys) {
+  Set<TolgeeKeyModel> translationForKeys(Set<String> keys) {
     final emptyTranslations = keys.map((key) {
       return TolgeeKeyModel(
         keyName: key,
         translations: {},
       );
-    }).toList();
+    }).toSet();
 
     return emptyTranslations
         .map((translationKey) =>
@@ -82,7 +82,7 @@ class TolgeeSdk extends ChangeNotifier {
               (element) => element.keyName == translationKey.keyName,
             ) ??
             translationKey)
-        .toList();
+        .toSet();
   }
 
   static Future<void> updateTranslation({
