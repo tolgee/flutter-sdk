@@ -22,21 +22,41 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('title'),
-        ),
+            title: TranslationWidget(
+          builder: (context, tr) => Text(
+            tr('title'),
+          ),
+        )),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Text('static text'),
+              Divider(),
               TranslationWidget(
                 builder: (context, tr) => Text(
                   tr('title'),
                 ),
               ),
               Divider(),
+              TranslationWidget(
+                builder: (context, tr) => Column(
+                  children: [
+                    Text(
+                      tr('title'),
+                    ),
+                    Text(
+                      tr('subtitle'),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(),
               TranslationWidget(builder: (context, tr) {
                 return OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print("Pressed");
+                  },
                   child: Text(
                     tr('button'),
                   ),

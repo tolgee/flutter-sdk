@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
-import 'package:tolgee/tolgee/ui/translation_pop_up.dart';
+import 'package:tolgee/tolgee/ui/translation_list_pop_up.dart';
 
 typedef TranslationGetter = String Function(String key);
 typedef TranslatedWidgetBuilder = Widget Function(
@@ -36,11 +36,9 @@ class _TranslationWidgetState extends State<TranslationWidget> {
                   showModalBottomSheet(
                       context: context,
                       builder: (context) {
-                        return TranslationPopUp(
-                          translationModel: TolgeeSdk.instance
-                              .translationForKeys(_keys)
-                              .first,
-                        );
+                        return TranslationListPopUp(
+                            translationModels:
+                                TolgeeSdk.instance.translationForKeys(_keys));
                       });
                 }
               : null;
