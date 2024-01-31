@@ -82,18 +82,21 @@ extension TolgeeKeyModelExtension on TolgeeKeyModel {
   String userFriendlyTranslations({
     required Map<String, TolgeeProjectLanguage> languages,
   }) {
-    if (this.translations.isEmpty) {
-      return 'Not translated yet';
-    }
-
-    return this.translations.entries.map((e) {
-      final flagEmoji = languages[e.key]?.flagEmoji;
+    return languages.entries.map((language) {
+      final flagEmoji = languages[language.key]?.flagEmoji;
       String flag = '';
       if (flagEmoji != null) {
         flag = ' $flagEmoji';
       }
 
-      return '${e.key}$flag ${e.value.text}';
+      final translation = this.translations[language.key];
+      String translationText = 'Not translated yet';
+
+      if (translation != null) {
+        translationText = translation.text;
+      }
+
+      return '${language.value.tag}$flag $translationText';
     }).join('\n');
   }
 }
