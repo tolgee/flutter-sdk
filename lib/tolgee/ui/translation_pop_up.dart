@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
-import 'package:tolgee/tolgee/api/tolgee_translation_model.dart';
+import 'package:tolgee/tolgee/api/models/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/models/tolgee_translation_model.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
 import 'package:tolgee/tolgee/utils/tolgee_translation_model_extension.dart';
 
@@ -80,10 +80,11 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                     setState(() {
                       isLoading = true;
                     });
-                    await TolgeeSdk.updateTranslation(
+                    await TolgeeSdk.updateTranslations(
                       key: model.keyName,
-                      value: model.translations.values.first.text,
-                      language: model.translations.keys.first,
+                      translations: model.translations.map(
+                        (key, value) => MapEntry(key, value.text),
+                      ),
                     );
                     Navigator.of(context).pop(model);
                   },

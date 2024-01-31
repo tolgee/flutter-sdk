@@ -1,8 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tolgee/tolgee/api/models/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/requests/update_translations_request.dart';
 import 'package:tolgee/tolgee/api/tolgee_api.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
-import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
 import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
 
 class TolgeeSdk extends ChangeNotifier {
@@ -29,6 +30,19 @@ class TolgeeSdk extends ChangeNotifier {
 
   void toggleTranslationEnabled() {
     _isTranslationEnabled = !_isTranslationEnabled;
+    notifyListeners();
+  }
+
+  void updateKeyModel({
+    required TolgeeKeyModel updatedKeyModel,
+  }) async {
+    _translations = _translations.map((keyModel) {
+      if (keyModel.keyName == updatedKeyModel.keyName) {
+        return updatedKeyModel;
+      }
+      return keyModel;
+    }).toList();
+
     notifyListeners();
   }
 
@@ -86,6 +100,7 @@ class TolgeeSdk extends ChangeNotifier {
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys) {
     final emptyTranslations = keys.map((key) {
       return TolgeeKeyModel(
+        keyId: 0,
         keyName: key,
         translations: {},
       );
@@ -100,22 +115,21 @@ class TolgeeSdk extends ChangeNotifier {
         .toSet();
   }
 
-  static Future<void> updateTranslation({
+  static Future<void> updateTranslations({
     required String key,
-    required String value,
-    required String language,
+    required Map<String, String> translations,
   }) async {
-    await TolgeeApi.updateTranslation(
-      config: instance._config!,
+    final updateTranslationRequest = UpdateTranslationsRequest(
       key: key,
-      language: language,
-      value: value,
+      translations: translations,
     );
 
-    await TolgeeSdk.init(
-      apiKey: instance._config!.apiKey,
-      apiUrl: instance._config!.apiUrl,
+    final updatedKeyModel = await TolgeeApi.updateTranslations(
+      config: instance._config!,
+      request: updateTranslationRequest,
     );
+
+    TolgeeSdk.instance.updateKeyModel(updatedKeyModel: updatedKeyModel);
   }
 }
 

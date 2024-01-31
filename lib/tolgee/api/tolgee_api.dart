@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:tolgee/tolgee/api/tolgee_all_project_languages_response.dart';
+import 'package:tolgee/tolgee/api/models/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/requests/update_translations_request.dart';
+import 'package:tolgee/tolgee/api/responses/tolgee_all_project_languages_response.dart';
+import 'package:tolgee/tolgee/api/responses/tolgee_translations_response.dart';
+import 'package:tolgee/tolgee/api/responses/update_translations_response.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
 import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
-import 'package:tolgee/tolgee/api/tolgee_translations_response.dart';
 
 class TolgeeApi {
   const TolgeeApi._();
@@ -37,20 +40,11 @@ class TolgeeApi {
     return body;
   }
 
-  static Future<void> updateTranslation({
+  static Future<TolgeeKeyModel> updateTranslations({
     required TolgeeConfig config,
-    required String key,
-    required String language,
-    required String value,
+    required UpdateTranslationsRequest request,
   }) async {
-    final bodyMap = {
-      'key': key,
-      'translations': {
-        language: value,
-      },
-    };
-
-    final body = jsonEncode(bodyMap);
+    final body = jsonEncode(request.toJson());
 
     final response = await post(
       Uri.parse('${config.apiUrl}/projects/translations'),
@@ -60,6 +54,10 @@ class TolgeeApi {
       },
       body: body,
     );
-    print(response.body);
+    final updateTranslationsResponse =
+        UpdateTranslationsResponse.fromJsonString(
+      response.body,
+    );
+    return updateTranslationsResponse.model;
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/models/tolgee_key_model.dart';
 import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
 import 'package:tolgee/tolgee/ui/translation_pop_up.dart';
