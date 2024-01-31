@@ -55,7 +55,12 @@ class MyApp extends StatelessWidget {
               TranslationWidget(builder: (context, tr) {
                 return OutlinedButton(
                   onPressed: () {
-                    print("Pressed");
+                    showDialog(
+                      context: context,
+                      builder: (context) => Text(
+                        "I'm clicked",
+                      ),
+                    );
                   },
                   child: Text(
                     tr('button'),

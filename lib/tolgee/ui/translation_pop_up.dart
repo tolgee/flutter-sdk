@@ -81,7 +81,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                     );
                     Navigator.of(context).pop(model);
                   },
-                  child: Text('Save')),
+                  child: Text('Update translations')),
           ],
         ),
       ),
@@ -92,6 +92,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 class TranslationTextField extends StatefulWidget {
   final String text;
   final String languageCode;
+  final String? flagEmoji;
   final void Function(String text) onTextChange;
 
   const TranslationTextField({
@@ -99,6 +100,7 @@ class TranslationTextField extends StatefulWidget {
     required this.text,
     required this.languageCode,
     required this.onTextChange,
+    this.flagEmoji,
   }) : super(key: key);
 
   @override

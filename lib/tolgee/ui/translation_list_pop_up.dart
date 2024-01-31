@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
+import 'package:tolgee/tolgee/tolgee_sdk.dart';
 import 'package:tolgee/tolgee/ui/translation_pop_up.dart';
 
 /// Pop-up widget that displays a list of [TolgeeKeyModel]s.
@@ -20,6 +22,7 @@ class TranslationListPopUp extends StatefulWidget {
 class _TranslationListPopUpState extends State<TranslationListPopUp> {
   @override
   Widget build(BuildContext context) {
+    final allProjectLanguages = TolgeeSdk.instance.allProjectLanguages;
     return Scaffold(
       appBar: AppBar(
         title: Text('Translations'),
@@ -29,20 +32,9 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
           itemCount: widget.translationModels.length,
           itemBuilder: (context, index) {
             final model = widget.translationModels[index];
-            return ListTile(
-              title: Text(model.keyName),
-              subtitle: Text(model.userFriendlyTranslations()),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return TranslationPopUp(
-                        translationModel: model,
-                      );
-                    },
-                  ),
-                );
-              },
+            return TranslationListTile(
+              model: model,
+              allProjectLanguages: allProjectLanguages,
             );
           },
         ),
@@ -51,15 +43,57 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
   }
 }
 
+class TranslationListTile extends StatelessWidget {
+  final TolgeeKeyModel model;
+  final Map<String, TolgeeProjectLanguage> allProjectLanguages;
+
+  const TranslationListTile({
+    Key? key,
+    required this.model,
+    required this.allProjectLanguages,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(model.keyName),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(model.userFriendlyTranslations(languages: allProjectLanguages)),
+        ],
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return TranslationPopUp(
+                translationModel: model,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
 extension TolgeeKeyModelExtension on TolgeeKeyModel {
-  String userFriendlyTranslations() {
+  String userFriendlyTranslations({
+    required Map<String, TolgeeProjectLanguage> languages,
+  }) {
     if (this.translations.isEmpty) {
       return 'Not translated yet';
     }
-    return this
-        .translations
-        .entries
-        .map((e) => '${e.key}: ${e.value.text}')
-        .join('\n');
+
+    return this.translations.entries.map((e) {
+      final flagEmoji = languages[e.key]?.flagEmoji;
+      String flag = '';
+      if (flagEmoji != null) {
+        flag = ' $flagEmoji';
+      }
+
+      return '${e.key}$flag ${e.value.text}';
+    }).join('\n');
   }
 }

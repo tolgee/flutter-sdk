@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tolgee/tolgee/api/tolgee_api.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
 import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
+import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
 
 class TolgeeSdk extends ChangeNotifier {
   TolgeeConfig? _config;
@@ -11,6 +12,10 @@ class TolgeeSdk extends ChangeNotifier {
 
   bool _isTranslationEnabled = true;
   bool get isTranslationEnabled => _isTranslationEnabled;
+
+  Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
+      _projectLanguages;
+
   bool mutateTranslationEnabled(bool value) {
     _isTranslationEnabled = value;
     notifyListeners();
@@ -28,6 +33,7 @@ class TolgeeSdk extends ChangeNotifier {
   }
 
   List<TolgeeKeyModel> _translations = [];
+  Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
   String translate(String key) {
     if (!_isTranslationEnabled) {
@@ -59,11 +65,20 @@ class TolgeeSdk extends ChangeNotifier {
       apiKey: apiKey,
       apiUrl: apiUrl,
     );
+
+    final allProjectLanguages = await TolgeeApi.getAllProjectLanguages(
+      config: instance._config!,
+    );
+
+    print('allProjectLanguages: $allProjectLanguages');
+
     final translations = await TolgeeApi.getTranslations(
       config: instance._config!,
     );
 
     print('jsonBody: $translations');
+    TolgeeSdk.instance._projectLanguages =
+        Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
     TolgeeSdk.instance._translations = translations.keys;
     TolgeeSdk.instance.notifyListeners();
   }

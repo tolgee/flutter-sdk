@@ -1,11 +1,28 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:tolgee/tolgee/api/tolgee_all_project_languages_response.dart';
 import 'package:tolgee/tolgee/api/tolgee_config.dart';
+import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
 import 'package:tolgee/tolgee/api/tolgee_translations_response.dart';
 
 class TolgeeApi {
   const TolgeeApi._();
+
+  static Future<List<TolgeeProjectLanguage>> getAllProjectLanguages({
+    required TolgeeConfig config,
+  }) async {
+    final response = await get(
+      Uri.parse('${config.apiUrl}/projects/languages'),
+      headers: {
+        'X-Api-Key': config.apiKey,
+      },
+    );
+
+    final body =
+        TolgeeAllProjectLanguagesResponse.fromJsonString(response.body);
+    return body.languages;
+  }
 
   static Future<TolgeeTranslationsResponse> getTranslations({
     required TolgeeConfig config,
