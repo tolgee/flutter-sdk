@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
 import 'package:tolgee/tolgee/api/tolgee_translation_model.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
+import 'package:tolgee/tolgee/utils/tolgee_translation_model_extension.dart';
 
 class TranslationPopUp extends StatefulWidget {
   final TolgeeKeyModel translationModel;
@@ -33,6 +34,8 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 
   @override
   Widget build(BuildContext context) {
+    final allProjectLanguages = TolgeeSdk.instance.allProjectLanguages;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -48,15 +51,18 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: model.translations.length,
+                itemCount: allProjectLanguages.length,
                 itemBuilder: (context, index) {
-                  final entry = model.translations.entries.elementAt(index);
+                  final language = allProjectLanguages.values.elementAt(index);
+                  final translation = model.translations[language.tag];
+
                   return TranslationTextField(
-                    text: entry.value.text,
-                    languageCode: entry.key,
+                    text: translation?.text,
+                    languageCode:
+                        model.languageCodeWithFlag(language: language),
                     onTextChange: (text) {
                       updateTranslationForKey(
-                        languageCode: entry.key,
+                        languageCode: language.tag,
                         text: text,
                       );
                     },
@@ -90,7 +96,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 }
 
 class TranslationTextField extends StatefulWidget {
-  final String text;
+  final String? text;
   final String languageCode;
   final String? flagEmoji;
   final void Function(String text) onTextChange;
@@ -110,7 +116,7 @@ class TranslationTextField extends StatefulWidget {
 class _TranslationTextFieldState extends State<TranslationTextField> {
   final TextEditingController _controller;
 
-  _TranslationTextFieldState(String initialText)
+  _TranslationTextFieldState(String? initialText)
       : _controller = TextEditingController(text: initialText);
 
   @override
@@ -122,6 +128,9 @@ class _TranslationTextFieldState extends State<TranslationTextField> {
         Expanded(
           child: TextField(
             controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'No translation yet',
+            ),
             onChanged: widget.onTextChange,
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:tolgee/tolgee/api/tolgee_key_model.dart';
 import 'package:tolgee/tolgee/api/tolgee_project_language.dart';
 import 'package:tolgee/tolgee/tolgee_sdk.dart';
 import 'package:tolgee/tolgee/ui/translation_pop_up.dart';
+import 'package:tolgee/tolgee/utils/tolgee_translation_model_extension.dart';
 
 /// Pop-up widget that displays a list of [TolgeeKeyModel]s.
 class TranslationListPopUp extends StatefulWidget {
@@ -26,6 +27,10 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Translations'),
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Material(
         child: ListView.builder(
@@ -75,28 +80,5 @@ class TranslationListTile extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-extension TolgeeKeyModelExtension on TolgeeKeyModel {
-  String userFriendlyTranslations({
-    required Map<String, TolgeeProjectLanguage> languages,
-  }) {
-    return languages.entries.map((language) {
-      final flagEmoji = languages[language.key]?.flagEmoji;
-      String flag = '';
-      if (flagEmoji != null) {
-        flag = ' $flagEmoji';
-      }
-
-      final translation = this.translations[language.key];
-      String translationText = 'Not translated yet';
-
-      if (translation != null) {
-        translationText = translation.text;
-      }
-
-      return '${language.value.tag}$flag $translationText';
-    }).join('\n');
   }
 }
