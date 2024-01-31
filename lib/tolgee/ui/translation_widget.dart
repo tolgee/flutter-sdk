@@ -23,46 +23,48 @@ class _TranslationWidgetState extends State<TranslationWidget> {
   Set<String> _keys = {};
   Color? _backgroundColor;
 
+  Widget _buildEnabledWidget(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return TranslationListPopUp(
+                  translationModels:
+                      TolgeeSdk.instance.translationForKeys(_keys).toList());
+            },
+          ),
+        );
+      },
+      behavior: HitTestBehavior.deferToChild,
+      child: AbsorbPointer(
+        absorbing: true,
+        child: widget.builder(
+          context,
+          (key) {
+            _keys.add(key);
+            return TolgeeSdk.instance.translate(key);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
         listenable: TolgeeSdk.instance,
         builder: (BuildContext context, Widget? child) {
           final isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
-          final backgroundColor = isTranslationEnabled ? Colors.green : null;
 
-          final onTap = isTranslationEnabled
-              ? () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return TranslationListPopUp(
-                            translationModels: TolgeeSdk.instance
-                                .translationForKeys(_keys)
-                                .toList());
-                      },
-                    ),
-                  );
-                }
-              : null;
-
-          return Container(
-            color: backgroundColor,
-            child: GestureDetector(
-              onTap: onTap,
-              behavior: HitTestBehavior.deferToChild,
-              child: AbsorbPointer(
-                absorbing: true,
-                child: widget.builder(
-                  context,
-                  (key) {
-                    _keys.add(key);
-                    return TolgeeSdk.instance.translate(key);
-                  },
-                ),
-              ),
-            ),
-          );
+          if (isTranslationEnabled) {
+            return _buildEnabledWidget(context);
+          } else {
+            return widget.builder(
+              context,
+              (key) => key,
+            );
+          }
         });
   }
 }

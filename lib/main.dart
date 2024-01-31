@@ -55,10 +55,10 @@ class MyApp extends StatelessWidget {
               TranslationWidget(builder: (context, tr) {
                 return OutlinedButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => Text(
-                        "I'm clicked",
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Clicked!'),
+                        duration: Duration(milliseconds: 1000),
                       ),
                     );
                   },
