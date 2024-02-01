@@ -10,9 +10,11 @@ import 'package:tolgee/src/api/tolgee_project_language.dart';
 
 import 'models/tolgee_key_model.dart';
 
+/// Represents Tolgee API
 class TolgeeApi {
   const TolgeeApi._();
 
+  /// Gets all languages in Tolgee project
   static Future<List<TolgeeProjectLanguage>> getAllProjectLanguages({
     required TolgeeConfig config,
   }) async {
@@ -28,6 +30,7 @@ class TolgeeApi {
     return body.languages;
   }
 
+  /// Gets all translations in Tolgee project
   static Future<TolgeeTranslationsResponse> getTranslations({
     required TolgeeConfig config,
   }) async {
@@ -41,6 +44,7 @@ class TolgeeApi {
     return body;
   }
 
+  /// Updates translations in Tolgee project
   static Future<TolgeeKeyModel> updateTranslations({
     required TolgeeConfig config,
     required UpdateTranslationsRequest request,

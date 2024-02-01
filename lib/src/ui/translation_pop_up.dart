@@ -4,6 +4,8 @@ import 'package:tolgee/src/api/models/tolgee_translation_model.dart';
 import 'package:tolgee/src/tolgee_sdk.dart';
 import 'package:tolgee/src/utils/tolgee_translation_model_extension.dart';
 
+import 'translation_text_field.dart';
+
 class TranslationPopUp extends StatefulWidget {
   final TolgeeKeyModel translationModel;
 
@@ -91,50 +93,6 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class TranslationTextField extends StatefulWidget {
-  final String? text;
-  final String languageCode;
-  final String? flagEmoji;
-  final void Function(String text) onTextChange;
-
-  const TranslationTextField({
-    Key? key,
-    required this.text,
-    required this.languageCode,
-    required this.onTextChange,
-    this.flagEmoji,
-  }) : super(key: key);
-
-  @override
-  State createState() => _TranslationTextFieldState(text);
-}
-
-class _TranslationTextFieldState extends State<TranslationTextField> {
-  final TextEditingController _controller;
-
-  _TranslationTextFieldState(String? initialText)
-      : _controller = TextEditingController(text: initialText);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(widget.languageCode),
-        const VerticalDivider(),
-        Expanded(
-          child: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              hintText: 'No translation yet',
-            ),
-            onChanged: widget.onTextChange,
-          ),
-        ),
-      ],
     );
   }
 }
