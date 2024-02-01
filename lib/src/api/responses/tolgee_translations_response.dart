@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:tolgee/src/api/models/tolgee_key_model.dart';
 
 class TolgeeTranslationsResponse {
+  /// List of languages in Tolgee project
   final List<TolgeeKeyModel> keys;
 
   const TolgeeTranslationsResponse(this.keys);

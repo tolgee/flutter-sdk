@@ -1,3 +1,4 @@
+/// The configuration for the Tolgee client.
 class TolgeeConfig {
   /// The API key for your Tolgee project.
   final String apiKey;

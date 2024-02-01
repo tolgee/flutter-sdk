@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
+import 'package:tolgee/src/logger/logger.dart';
 
 import 'api/models/tolgee_key_model.dart';
 import 'api/requests/update_translations_request.dart';
@@ -76,19 +77,21 @@ class TolgeeSdk extends ChangeNotifier {
     required String apiKey,
     required String apiUrl,
   }) async {
-    instance._config = TolgeeConfig(
+    final config = TolgeeConfig(
       apiKey: apiKey,
       apiUrl: apiUrl,
     );
 
+    instance._config = config;
+
     final allProjectLanguages = await TolgeeApi.getAllProjectLanguages(
-      config: instance._config!,
+      config: config,
     );
 
     print('allProjectLanguages: $allProjectLanguages');
 
     final translations = await TolgeeApi.getTranslations(
-      config: instance._config!,
+      config: config,
     );
 
     print('jsonBody: $translations');
@@ -125,8 +128,15 @@ class TolgeeSdk extends ChangeNotifier {
       translations: translations,
     );
 
+    final config = instance._config;
+
+    if (config == null) {
+      TolgeeLogger.instance.log('Tolgee is not initialized');
+      return;
+    }
+
     final updatedKeyModel = await TolgeeApi.updateTranslations(
-      config: instance._config!,
+      config: config,
       request: updateTranslationRequest,
     );
 
