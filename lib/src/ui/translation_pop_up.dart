@@ -15,20 +15,19 @@ class TranslationPopUp extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State createState() => _TranslationPopUpState(translationModel);
+  State createState() => _TranslationPopUpState();
 }
 
 class _TranslationPopUpState extends State<TranslationPopUp> {
-  TolgeeKeyModel model;
   bool isLoading = false;
 
-  _TranslationPopUpState(this.model);
+  _TranslationPopUpState();
 
   void updateTranslationForKey({
     required String languageCode,
     required String text,
   }) {
-    model.translations[languageCode] = TolgeeTranslationModel(
+    widget.translationModel.translations[languageCode] = TolgeeTranslationModel(
       text: text,
     );
   }
@@ -42,7 +41,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
         title: Row(
           children: [
             Text(
-              model.keyName,
+              widget.translationModel.keyName,
             ),
           ],
         ),
@@ -55,12 +54,13 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                 itemCount: allProjectLanguages.length,
                 itemBuilder: (context, index) {
                   final language = allProjectLanguages.values.elementAt(index);
-                  final translation = model.translations[language.tag];
+                  final translation =
+                      widget.translationModel.translations[language.tag];
 
                   return TranslationTextField(
                     text: translation?.text,
-                    languageCode:
-                        model.languageCodeWithFlag(language: language),
+                    languageCode: widget.translationModel
+                        .languageCodeWithFlag(language: language),
                     onTextChange: (text) {
                       updateTranslationForKey(
                         languageCode: language.tag,
@@ -82,12 +82,14 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                       isLoading = true;
                     });
                     await TolgeeSdk.updateTranslations(
-                      key: model.keyName,
-                      translations: model.translations.map(
+                      key: widget.translationModel.keyName,
+                      translations: widget.translationModel.translations.map(
                         (key, value) => MapEntry(key, value.text),
                       ),
                     );
-                    Navigator.of(context).pop(model);
+                    if (mounted) {
+                      Navigator.of(context).pop(widget.translationModel);
+                    }
                   },
                   child: const Text('Update translations')),
           ],
