@@ -15,7 +15,7 @@ extension TolgeeKeyModelExtension on TolgeeKeyModel {
         translationText = translation.text;
       }
 
-      return '${languageCode} $translationText';
+      return '$languageCode $translationText';
     }).join('\n');
   }
 

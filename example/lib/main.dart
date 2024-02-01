@@ -30,14 +30,14 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('static text'),
-              Divider(),
+              const Text('static text'),
+              const Divider(),
               TranslationWidget(
                 builder: (context, tr) => Text(
                   tr('title'),
                 ),
               ),
-              Divider(),
+              const Divider(),
               TranslationWidget(
                 builder: (context, tr) => Column(
                   children: [
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
               TranslationWidget(builder: (context, tr) {
                 return OutlinedButton(
                   onPressed: () {

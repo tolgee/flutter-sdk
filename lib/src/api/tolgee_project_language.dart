@@ -36,4 +36,15 @@ class TolgeeProjectLanguage {
   String toString() {
     return 'TolgeeProjectLanguage{name: $name, tag: $tag, originalName: $originalName, flagEmoji: $flagEmoji, base: $base}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is TolgeeProjectLanguage &&
+            name == other.name &&
+            tag == other.tag &&
+            originalName == other.originalName &&
+            flagEmoji == other.flagEmoji &&
+            base == other.base);
+  }
 }

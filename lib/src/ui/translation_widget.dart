@@ -16,12 +16,11 @@ class TranslationWidget extends StatefulWidget {
   });
 
   @override
-  _TranslationWidgetState createState() => _TranslationWidgetState();
+  State createState() => _TranslationWidgetState();
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
-  Set<String> _keys = {};
-  Color? _backgroundColor;
+  final Set<String> _keys = {};
 
   Widget _buildEnabledWidget(BuildContext context) {
     return GestureDetector(

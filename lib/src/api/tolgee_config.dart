@@ -20,4 +20,12 @@ class TolgeeConfig {
   String toString() {
     return 'TolgeeConfig(apiKey: $apiKey, apiUrl: $apiUrl)';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is TolgeeConfig &&
+            apiKey == other.apiKey &&
+            apiUrl == other.apiUrl);
+  }
 }

@@ -13,8 +13,7 @@ class TranslationPopUp extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TranslationPopUpState createState() =>
-      _TranslationPopUpState(translationModel);
+  State createState() => _TranslationPopUpState(translationModel);
 }
 
 class _TranslationPopUpState extends State<TranslationPopUp> {
@@ -71,7 +70,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
               ),
             ),
             if (isLoading)
-              Center(
+              const Center(
                 child: CircularProgressIndicator(),
               ),
             if (!isLoading)
@@ -88,7 +87,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                     );
                     Navigator.of(context).pop(model);
                   },
-                  child: Text('Update translations')),
+                  child: const Text('Update translations')),
           ],
         ),
       ),
@@ -111,7 +110,7 @@ class TranslationTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TranslationTextFieldState createState() => _TranslationTextFieldState(text);
+  State createState() => _TranslationTextFieldState(text);
 }
 
 class _TranslationTextFieldState extends State<TranslationTextField> {
@@ -125,11 +124,11 @@ class _TranslationTextFieldState extends State<TranslationTextField> {
     return Row(
       children: [
         Text(widget.languageCode),
-        VerticalDivider(),
+        const VerticalDivider(),
         Expanded(
           child: TextField(
             controller: _controller,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'No translation yet',
             ),
             onChanged: widget.onTextChange,

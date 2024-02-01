@@ -8,16 +8,16 @@ import 'package:tolgee/src/utils/tolgee_translation_model_extension.dart';
 /// Pop-up widget that displays a list of [TolgeeKeyModel]s.
 class TranslationListPopUp extends StatefulWidget {
   /// List of [TolgeeKeyModel]s to be displayed in the pop-up.
-  List<TolgeeKeyModel> _translationModels;
+  final List<TolgeeKeyModel> _translationModels;
 
   /// Creates a new [TranslationListPopUp] widget.
-  TranslationListPopUp({
+  const TranslationListPopUp({
     super.key,
     required List<TolgeeKeyModel> translationModels,
-  }) : this._translationModels = translationModels;
+  }) : _translationModels = translationModels;
 
   @override
-  _TranslationListPopUpState createState() => _TranslationListPopUpState();
+  State createState() => _TranslationListPopUpState();
 }
 
 class _TranslationListPopUpState extends State<TranslationListPopUp> {
@@ -26,9 +26,9 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
     final allProjectLanguages = TolgeeSdk.instance.allProjectLanguages;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Translations'),
+        title: const Text('Translations'),
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
