@@ -88,13 +88,14 @@ class TolgeeSdk extends ChangeNotifier {
       config: config,
     );
 
-    print('allProjectLanguages: $allProjectLanguages');
+    TolgeeLogger.debug('allProjectLanguages: $allProjectLanguages');
 
     final translations = await TolgeeApi.getTranslations(
       config: config,
     );
 
-    print('jsonBody: $translations');
+    TolgeeLogger.debug('jsonBody: $translations');
+
     TolgeeSdk.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
     TolgeeSdk.instance._translations = translations.keys;
@@ -131,7 +132,7 @@ class TolgeeSdk extends ChangeNotifier {
     final config = instance._config;
 
     if (config == null) {
-      TolgeeLogger.instance.log('Tolgee is not initialized');
+      TolgeeLogger.critical('Tolgee is not initialized');
       return;
     }
 
@@ -144,6 +145,6 @@ class TolgeeSdk extends ChangeNotifier {
   }
 }
 
-extension Tolgee on BuildContext {
+extension TolgeeExtension on BuildContext {
   TolgeeSdk get tolgee => TolgeeSdk.instance;
 }
