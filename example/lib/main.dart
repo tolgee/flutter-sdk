@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
                     OutlinedButton(
                       onPressed: () {
                         setState(() {
-                          Tolgee.currentLocale = locale;
+                          Tolgee.setCurrentLocale(locale);
                         });
                       },
                       child: Text(locale.languageCode),

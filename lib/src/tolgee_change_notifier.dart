@@ -19,9 +19,9 @@ class TolgeeChangeNotifier extends ChangeNotifier {
   Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
       _projectLanguages;
 
-  Locale get currentLanguage => _currentLanguage ?? Locale('en');
+  Locale? get currentLanguage => _currentLanguage;
 
-  set currentLanguage(Locale locale) {
+  void setCurrentLanguage(Locale locale) {
     _currentLanguage = locale;
     notifyListeners();
   }
@@ -59,6 +59,11 @@ class TolgeeChangeNotifier extends ChangeNotifier {
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
   String translate(String key) {
+    final currentLanguage = _currentLanguage;
+    if (currentLanguage == null) {
+      return key;
+    }
+
     final value = _translations.firstWhereOrNull(
       (element) => element.keyName == key,
     );

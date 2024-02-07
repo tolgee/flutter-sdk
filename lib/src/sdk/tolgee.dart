@@ -26,12 +26,12 @@ class Tolgee {
   }
 
   /// Returns the current locale
-  static Locale get currentLocale =>
+  static Locale? get currentLocale =>
       TolgeeChangeNotifier.instance.currentLanguage;
 
   /// Sets the current locale
-  static set currentLocale(Locale locale) {
-    TolgeeChangeNotifier.instance.currentLanguage = locale;
+  static void setCurrentLocale(Locale locale) {
+    TolgeeChangeNotifier.instance.setCurrentLanguage(locale);
   }
 
   /// Returns list of supported locales

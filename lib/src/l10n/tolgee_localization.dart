@@ -12,7 +12,7 @@ class TolgeeLocalization {
   }
 
   static Future<TolgeeLocalization> load(Locale locale) async {
-    Tolgee.currentLocale = locale;
+    Tolgee.setCurrentLocale(locale);
     return const TolgeeLocalization._();
   }
 
