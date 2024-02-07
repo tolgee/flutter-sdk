@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee.dart';
 
 Future<void> main() async {
-  await TolgeeSdk.init(
+  await Tolgee.init(
     apiKey: 'tgpak_gm4tqok7nzzw2ylgoy2ds4lwgjvwq43rgvqxa33wgfzxeolwge',
     apiUrl: 'https://app.tolgee.io/v2',
   );
@@ -90,7 +90,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => TolgeeSdk.instance.toggleTranslationEnabled(),
+          onPressed: () => Tolgee.toggleTranslationEnabled(),
           tooltip: 'Toggle',
           child: const Icon(Icons.swap_horizontal_circle_outlined),
         ), // This trailing comma makes auto-formatting nicer for build methods.

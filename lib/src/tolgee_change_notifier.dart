@@ -8,7 +8,7 @@ import 'api/requests/update_translations_request.dart';
 import 'api/tolgee_api.dart';
 import 'api/tolgee_project_language.dart';
 
-class TolgeeSdk extends ChangeNotifier {
+class TolgeeChangeNotifier extends ChangeNotifier {
   TolgeeConfig? _config;
 
   Locale? _currentLanguage;
@@ -77,8 +77,8 @@ class TolgeeSdk extends ChangeNotifier {
     return translation.text;
   }
 
-  static final instance = TolgeeSdk._();
-  TolgeeSdk._();
+  static final instance = TolgeeChangeNotifier._();
+  TolgeeChangeNotifier._();
 
   static Future<void> init({
     required String apiKey,
@@ -103,10 +103,10 @@ class TolgeeSdk extends ChangeNotifier {
 
     TolgeeLogger.debug('jsonBody: $translations');
 
-    TolgeeSdk.instance._projectLanguages =
+    TolgeeChangeNotifier.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
-    TolgeeSdk.instance._translations = translations.keys;
-    TolgeeSdk.instance.notifyListeners();
+    TolgeeChangeNotifier.instance._translations = translations.keys;
+    TolgeeChangeNotifier.instance.notifyListeners();
   }
 
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys) {
@@ -148,10 +148,7 @@ class TolgeeSdk extends ChangeNotifier {
       request: updateTranslationRequest,
     );
 
-    TolgeeSdk.instance.updateKeyModel(updatedKeyModel: updatedKeyModel);
+    TolgeeChangeNotifier.instance
+        .updateKeyModel(updatedKeyModel: updatedKeyModel);
   }
-}
-
-extension TolgeeExtension on BuildContext {
-  TolgeeSdk get tolgee => TolgeeSdk.instance;
 }

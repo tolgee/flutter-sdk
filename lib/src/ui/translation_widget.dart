@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tolgee/src/tolgee_sdk.dart';
+import 'package:tolgee/src/tolgee_change_notifier.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
 
 typedef TranslationGetter = String Function(String key);
@@ -29,8 +29,9 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           MaterialPageRoute(
             builder: (context) {
               return TranslationListPopUp(
-                  translationModels:
-                      TolgeeSdk.instance.translationForKeys(_keys).toList());
+                  translationModels: TolgeeChangeNotifier.instance
+                      .translationForKeys(_keys)
+                      .toList());
             },
           ),
         );
@@ -42,7 +43,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           context,
           (key) {
             _keys.add(key);
-            return TolgeeSdk.instance.translate(key);
+            return TolgeeChangeNotifier.instance.translate(key);
           },
         ),
       ),
@@ -52,9 +53,10 @@ class _TranslationWidgetState extends State<TranslationWidget> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-        listenable: TolgeeSdk.instance,
+        listenable: TolgeeChangeNotifier.instance,
         builder: (BuildContext context, Widget? child) {
-          final isTranslationEnabled = TolgeeSdk.instance.isTranslationEnabled;
+          final isTranslationEnabled =
+              TolgeeChangeNotifier.instance.isTranslationEnabled;
 
           if (isTranslationEnabled) {
             return _buildEnabledWidget(context);
