@@ -23,6 +23,22 @@ class _TranslationWidgetState extends State<TranslationWidget> {
   final Set<String> _keys = {};
 
   Widget _buildEnabledWidget(BuildContext context) {
+    const opacity = 0.2;
+    final kGradientBoxDecoration = BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.center,
+        end: const Alignment(-0.2, -0.5),
+        stops: const [0.0, 0.5, 0.5, 1],
+        colors: [
+          Colors.orangeAccent.withOpacity(opacity),
+          Colors.orangeAccent.withOpacity(opacity),
+          Colors.black.withOpacity(opacity),
+          Colors.black.withOpacity(opacity),
+        ],
+        tileMode: TileMode.repeated,
+      ),
+    );
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -37,14 +53,17 @@ class _TranslationWidgetState extends State<TranslationWidget> {
         );
       },
       behavior: HitTestBehavior.deferToChild,
-      child: AbsorbPointer(
-        absorbing: true,
-        child: widget.builder(
-          context,
-          (key) {
-            _keys.add(key);
-            return TolgeeChangeNotifier.instance.translate(key);
-          },
+      child: Container(
+        decoration: kGradientBoxDecoration,
+        child: AbsorbPointer(
+          absorbing: true,
+          child: widget.builder(
+            context,
+            (key) {
+              _keys.add(key);
+              return TolgeeChangeNotifier.instance.translate(key);
+            },
+          ),
         ),
       ),
     );
@@ -63,7 +82,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           } else {
             return widget.builder(
               context,
-              (key) => key,
+              (key) => TolgeeChangeNotifier.instance.translate(key),
             );
           }
         });

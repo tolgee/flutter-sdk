@@ -59,9 +59,6 @@ class TolgeeChangeNotifier extends ChangeNotifier {
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
   String translate(String key) {
-    if (!_isTranslationEnabled) {
-      return key;
-    }
     final value = _translations.firstWhereOrNull(
       (element) => element.keyName == key,
     );
