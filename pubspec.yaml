@@ -12,6 +12,9 @@ dependencies:
     sdk: flutter
   http: ^1.0.1
   collection: ^1.14.12
+  flutter_localizations :
+    sdk : flutter
+  intl : any
 
 dev_dependencies:
   flutter_test:

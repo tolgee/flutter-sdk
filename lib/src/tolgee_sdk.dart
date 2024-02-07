@@ -11,13 +11,20 @@ import 'api/tolgee_project_language.dart';
 class TolgeeSdk extends ChangeNotifier {
   TolgeeConfig? _config;
 
-  String get currentLanguage => 'en';
+  Locale? _currentLanguage;
 
   bool _isTranslationEnabled = true;
   bool get isTranslationEnabled => _isTranslationEnabled;
 
   Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
       _projectLanguages;
+
+  Locale get currentLanguage => _currentLanguage ?? Locale('en');
+
+  set currentLanguage(Locale locale) {
+    _currentLanguage = locale;
+    notifyListeners();
+  }
 
   bool mutateTranslationEnabled(bool value) {
     _isTranslationEnabled = value;
@@ -62,7 +69,7 @@ class TolgeeSdk extends ChangeNotifier {
       return key;
     }
 
-    final translation = value.translations[currentLanguage];
+    final translation = value.translations[currentLanguage.toLanguageTag()];
     if (translation == null) {
       return key;
     }

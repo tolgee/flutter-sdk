@@ -9,13 +9,23 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<Locale> supportedLocales = Tolgee.supportedLocales.toList();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: context.tolgee.currentLanguage,
+      title: Tolgee.baseLocale.languageCode,
+      localizationsDelegates: Tolgee.localizationDelegates,
+      supportedLocales: Tolgee.supportedLocales,
+      locale: supportedLocales.first,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -30,13 +40,23 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var locale in supportedLocales)
+                    OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          Tolgee.currentLocale = locale;
+                        });
+                      },
+                      child: Text(locale.languageCode),
+                    ),
+                ],
+              ),
               const Text('static text'),
               const Divider(),
-              TranslationWidget(
-                builder: (context, tr) => Text(
-                  tr('title'),
-                ),
-              ),
+              const TranslationText('title'),
               const Divider(),
               TranslationWidget(
                 builder: (context, tr) => Column(
