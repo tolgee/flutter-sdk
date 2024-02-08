@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tolgee/src/api/models/tolgee_key_model.dart';
 import 'package:tolgee/src/api/tolgee_project_language.dart';
 import 'package:tolgee/src/ui/translation_pop_up.dart';
-import 'package:tolgee/src/utils/tolgee_translation_model_extension.dart';
 
 class TranslationListTile extends StatelessWidget {
   final TolgeeKeyModel model;
@@ -18,14 +17,54 @@ class TranslationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final supportProjectLanguages = allProjectLanguages.values.where(
+      (element) => model.translations.keys.contains(element.tag),
+    );
+
+    final languageTags = supportProjectLanguages.map((e) => e.tag).toList();
+    final languageFlags =
+        supportProjectLanguages.map((e) => e.flagEmoji).toList();
+    final languageTranslations = supportProjectLanguages
+        .map((e) => model.translations[e.tag]?.text)
+        .toList();
+
     return ListTile(
       title: Text(model.keyName),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      subtitle: Row(
         children: [
-          Text(model.userFriendlyTranslations(languages: allProjectLanguages)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: languageTags
+                .map(
+                  (e) => Text(
+                    e,
+                  ),
+                )
+                .toList(),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: languageFlags
+                .map(
+                  (e) => Text(
+                    e ?? '',
+                    strutStyle: const StrutStyle(
+                      forceStrutHeight: true,
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: languageTranslations.map((e) => Text(e ?? '')).toList(),
+          ),
         ],
       ),
+      trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final result = await Navigator.of(context).push(
           MaterialPageRoute(

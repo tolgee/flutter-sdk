@@ -32,8 +32,10 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
         ),
       ),
       body: Material(
-        child: ListView.builder(
+        child: ListView.separated(
           itemCount: widget._translationModels.length,
+          padding: const EdgeInsets.all(8),
+          separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
             final model = widget._translationModels[index];
             return TranslationListTile(
