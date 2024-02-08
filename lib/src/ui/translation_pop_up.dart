@@ -60,6 +60,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 
                   return TranslationTextField(
                     text: translation?.text,
+                    flagEmoji: language.flagEmoji,
                     languageCode: widget.translationModel
                         .languageCodeWithFlag(language: language),
                     onTextChange: (text) {

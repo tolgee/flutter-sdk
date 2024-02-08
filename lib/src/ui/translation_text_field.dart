@@ -33,15 +33,22 @@ class _TranslationTextFieldState extends State<TranslationTextField> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(widget.languageCode),
-        const VerticalDivider(),
         Expanded(
-          child: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              hintText: 'No translation yet',
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: 'No translation yet',
+                prefix: Text(widget.flagEmoji ?? ''),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 16.0,
+                ),
+              ),
+              onChanged: widget.onTextChange,
             ),
-            onChanged: widget.onTextChange,
           ),
         ),
       ],
