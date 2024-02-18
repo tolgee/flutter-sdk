@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/message_format.dart';
 import 'package:tolgee/src/tolgee_change_notifier.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
 
-typedef TranslationGetter = String Function(String key);
+typedef TranslationGetter = String Function(
+  String key, [
+  Map<String, Object>? args,
+]);
 typedef TranslatedWidgetBuilder = Widget Function(
   BuildContext context,
   TranslationGetter translationGetter,
@@ -59,14 +63,23 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           absorbing: true,
           child: widget.builder(
             context,
-            (key) {
+            (key, [args]) {
               _keys.add(key);
-              return TolgeeChangeNotifier.instance.translate(key);
+              return _translate(key, args);
             },
           ),
         ),
       ),
     );
+  }
+
+  String _translate(String key, [Map<String, Object>? args]) {
+    if (args == null) {
+      return TolgeeChangeNotifier.instance.translate(key);
+    }
+    return MessageFormat(
+      TolgeeChangeNotifier.instance.translate(key),
+    ).format(args);
   }
 
   @override
@@ -82,7 +95,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           } else {
             return widget.builder(
               context,
-              (key) => TolgeeChangeNotifier.instance.translate(key),
+              (key, [args]) => _translate(key, args),
             );
           }
         });
