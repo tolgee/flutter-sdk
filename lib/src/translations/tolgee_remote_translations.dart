@@ -2,13 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/logger/logger.dart';
+import 'package:tolgee/src/translations/tolgee_static_translations.dart';
+import 'package:tolgee/src/translations/tolgee_translations.dart';
 
-import 'api/models/tolgee_key_model.dart';
-import 'api/requests/update_translations_request.dart';
-import 'api/tolgee_api.dart';
-import 'api/tolgee_project_language.dart';
+import '../api/models/tolgee_key_model.dart';
+import '../api/requests/update_translations_request.dart';
+import '../api/tolgee_api.dart';
+import '../api/tolgee_project_language.dart';
 
-class TolgeeChangeNotifier extends ChangeNotifier {
+class TolgeeRemoteTranslations extends ChangeNotifier
+    implements TolgeeTranslations {
   TolgeeConfig? _config;
 
   Locale? _currentLanguage;
@@ -16,32 +19,26 @@ class TolgeeChangeNotifier extends ChangeNotifier {
   bool _isTranslationEnabled = true;
   bool get isTranslationEnabled => _isTranslationEnabled;
 
+  @override
   Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
       _projectLanguages;
 
+  @override
   Locale? get currentLanguage => _currentLanguage;
 
+  @override
   void setCurrentLanguage(Locale locale) {
     _currentLanguage = locale;
     notifyListeners();
   }
 
-  bool mutateTranslationEnabled(bool value) {
-    _isTranslationEnabled = value;
-    notifyListeners();
-    return _isTranslationEnabled;
-  }
-
-  void setTranslationEnabled(bool value) {
-    _isTranslationEnabled = value;
-    notifyListeners();
-  }
-
+  @override
   void toggleTranslationEnabled() {
     _isTranslationEnabled = !_isTranslationEnabled;
     notifyListeners();
   }
 
+  @override
   void updateKeyModel({
     required TolgeeKeyModel updatedKeyModel,
   }) async {
@@ -58,6 +55,7 @@ class TolgeeChangeNotifier extends ChangeNotifier {
   List<TolgeeKeyModel> _translations = [];
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
+  @override
   String translate(String key) {
     final currentLanguage = _currentLanguage;
     if (currentLanguage == null) {
@@ -79,8 +77,8 @@ class TolgeeChangeNotifier extends ChangeNotifier {
     return translation.text;
   }
 
-  static final instance = TolgeeChangeNotifier._();
-  TolgeeChangeNotifier._();
+  static final instance = TolgeeRemoteTranslations._();
+  TolgeeRemoteTranslations._();
 
   static Future<void> init({
     required String apiKey,
@@ -90,6 +88,8 @@ class TolgeeChangeNotifier extends ChangeNotifier {
       apiKey: apiKey,
       apiUrl: apiUrl,
     );
+    WidgetsFlutterBinding.ensureInitialized();
+    await TolgeeStaticTranslations.init();
 
     instance._config = config;
 
@@ -105,12 +105,13 @@ class TolgeeChangeNotifier extends ChangeNotifier {
 
     TolgeeLogger.debug('jsonBody: $translations');
 
-    TolgeeChangeNotifier.instance._projectLanguages =
+    TolgeeRemoteTranslations.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
-    TolgeeChangeNotifier.instance._translations = translations.keys;
-    TolgeeChangeNotifier.instance.notifyListeners();
+    TolgeeRemoteTranslations.instance._translations = translations.keys;
+    TolgeeRemoteTranslations.instance.notifyListeners();
   }
 
+  @override
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys) {
     final emptyTranslations = keys.map((key) {
       return TolgeeKeyModel(
@@ -129,7 +130,8 @@ class TolgeeChangeNotifier extends ChangeNotifier {
         .toSet();
   }
 
-  static Future<void> updateTranslations({
+  @override
+  Future<void> updateTranslations({
     required String key,
     required Map<String, String> translations,
   }) async {
@@ -150,7 +152,7 @@ class TolgeeChangeNotifier extends ChangeNotifier {
       request: updateTranslationRequest,
     );
 
-    TolgeeChangeNotifier.instance
+    TolgeeRemoteTranslations.instance
         .updateKeyModel(updatedKeyModel: updatedKeyModel);
   }
 }

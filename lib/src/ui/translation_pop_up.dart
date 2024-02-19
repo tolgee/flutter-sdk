@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/src/api/models/tolgee_key_model.dart';
 import 'package:tolgee/src/api/models/tolgee_translation_model.dart';
-import 'package:tolgee/src/tolgee_change_notifier.dart';
+import 'package:tolgee/src/translations/tolgee_remote_translations.dart';
 import 'package:tolgee/src/utils/tolgee_translation_model_extension.dart';
 
 import 'translation_text_field.dart';
@@ -35,7 +35,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
   @override
   Widget build(BuildContext context) {
     final allProjectLanguages =
-        TolgeeChangeNotifier.instance.allProjectLanguages;
+        TolgeeRemoteTranslations.instance.allProjectLanguages;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +83,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                     setState(() {
                       isLoading = true;
                     });
-                    await TolgeeChangeNotifier.updateTranslations(
+                    await TolgeeRemoteTranslations.instance.updateTranslations(
                       key: widget.translationModel.keyName,
                       translations: widget.translationModel.translations.map(
                         (key, value) => MapEntry(key, value.text),

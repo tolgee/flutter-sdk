@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/src/api/models/tolgee_key_model.dart';
-import 'package:tolgee/src/tolgee_change_notifier.dart';
+import 'package:tolgee/src/translations/tolgee_remote_translations.dart';
 import 'package:tolgee/src/ui/translation_list_tile.dart';
 
 /// Pop-up widget that displays a list of [TolgeeKeyModel]s.
@@ -22,7 +22,7 @@ class _TranslationListPopUpState extends State<TranslationListPopUp> {
   @override
   Widget build(BuildContext context) {
     final allProjectLanguages =
-        TolgeeChangeNotifier.instance.allProjectLanguages;
+        TolgeeRemoteTranslations.instance.allProjectLanguages;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Translations'),
