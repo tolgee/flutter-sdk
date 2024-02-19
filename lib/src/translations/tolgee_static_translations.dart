@@ -12,13 +12,6 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
   Set<TolgeeKeyModel> _translations = {};
 
-  /// read all {locale}.json files and populate _translations,
-  /// _projectLanguages, and _currentLanguage. Example content of {locale}.json:
-  /// {
-  /// "button" : "Do it",
-  /// "subtitle" : "Hello {name}",
-  /// "title" : "App Titles"
-  /// }
   static Future<void> init() async {
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
 
@@ -27,9 +20,6 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
         .where((element) => element.startsWith('lib/tolgee'))
         .where((element) => element.endsWith('json'))
         .toList();
-
-    // lib/tolgee/en.json
-    // lib/tolgee/es.json
 
     final futures = tolgeeFiles.map((e) async {
       final content = await rootBundle.loadString(e);
@@ -53,20 +43,8 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
       );
     }
 
-    Set<TolgeeKeyModel> _translations = {};
+    Set<TolgeeKeyModel> translations0 = {};
 
-    // map to
-    ///
-    ///
-    ///  {
-    ///  "keyId": string,
-    ///  translations: {
-    ///  "en": string,
-    ///  "es": string
-    ///  }
-    ///
-    /// }
-    ///
     Map<String, Map<String, dynamic>> tempTranslations = {};
     for (final fileEntry in filesContent.entries) {
       for (final contentEntry in fileEntry.value.entries) {
@@ -74,7 +52,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
           tempTranslations[contentEntry.key] = {};
         }
 
-        tempTranslations[contentEntry.key]![fileEntry.key] = contentEntry.value;
+        tempTranslations[contentEntry.key]?[fileEntry.key] = contentEntry.value;
       }
     }
 
@@ -86,7 +64,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
         );
       }
 
-      _translations.add(
+      translations0.add(
         TolgeeKeyModel(
           keyName: entry.key,
           translations: translations,
@@ -99,7 +77,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
       projectLanguages.values.firstWhere((element) => element.base).tag,
     );
     instance._projectLanguages = projectLanguages;
-    instance._translations = _translations;
+    instance._translations = translations0;
   }
 
   TolgeeStaticTranslations._();
@@ -107,12 +85,10 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   static final instance = TolgeeStaticTranslations._();
 
   @override
-  // TODO: implement allProjectLanguages
   Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
-      throw UnimplementedError();
+      _projectLanguages;
 
   @override
-  // TODO: implement currentLanguage
   Locale? get currentLanguage => _currentLanguage;
 
   @override
@@ -127,10 +103,16 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
 
   @override
   String translate(String key) {
+    final languageCode = _currentLanguage?.languageCode;
+    if (languageCode == null) {
+      return key;
+    }
+
     return _translations
-        .firstWhere((element) => element.keyName == key)
-        .translations[_currentLanguage!.languageCode]!
-        .text;
+            .firstWhere((element) => element.keyName == key)
+            .translations[languageCode]
+            ?.text ??
+        key;
   }
 
   @override
@@ -141,13 +123,17 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   }
 
   @override
-  void updateKeyModel({required TolgeeKeyModel updatedKeyModel}) {
+  void updateKeyModel({
+    required TolgeeKeyModel updatedKeyModel,
+  }) {
     // do nothing
   }
 
   @override
-  Future<void> updateTranslations(
-      {required String key, required Map<String, String> translations}) async {
+  Future<void> updateTranslations({
+    required String key,
+    required Map<String, String> translations,
+  }) async {
     // do nothing
   }
 }
