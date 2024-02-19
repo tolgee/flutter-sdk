@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee.dart';
 
 Future<void> main() async {
-  await Tolgee.init(
-    apiKey: 'tgpak_gm4tqok7nzzw2ylgoy2ds4lwgjvwq43rgvqxa33wgfzxeolwge',
-    apiUrl: 'https://app.tolgee.io/v2',
+  // Initialize Tolgee with remote translations from Tolgee Cloud.
+  // You can also use static translations by calling `Tolgee.initStatic()`.
+  await Tolgee.initRemote(
+    apiKey: const String.fromEnvironment('TOLGEE_API_KEY'),
+    apiUrl: const String.fromEnvironment('TOLGEE_API_URL'),
   );
   runApp(const MyApp());
 }

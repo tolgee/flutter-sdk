@@ -19,6 +19,8 @@ abstract class TolgeeTranslations {
 
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys);
 
+  bool get isTranslationEnabled;
+
   Future<void> updateTranslations({
     required String key,
     required Map<String, String> translations,

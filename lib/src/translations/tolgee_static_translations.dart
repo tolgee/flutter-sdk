@@ -13,6 +13,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   Set<TolgeeKeyModel> _translations = {};
 
   static Future<void> init() async {
+    WidgetsFlutterBinding.ensureInitialized();
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
 
     final tolgeeFiles = manifest
@@ -136,4 +137,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   }) async {
     // do nothing
   }
+
+  @override
+  bool get isTranslationEnabled => false;
 }

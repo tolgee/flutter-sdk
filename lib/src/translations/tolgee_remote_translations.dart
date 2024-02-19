@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/logger/logger.dart';
-import 'package:tolgee/src/translations/tolgee_static_translations.dart';
 import 'package:tolgee/src/translations/tolgee_translations.dart';
 
 import '../api/models/tolgee_key_model.dart';
@@ -17,6 +16,8 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? _currentLanguage;
 
   bool _isTranslationEnabled = true;
+
+  @override
   bool get isTranslationEnabled => _isTranslationEnabled;
 
   @override
@@ -88,8 +89,6 @@ class TolgeeRemoteTranslations extends ChangeNotifier
       apiKey: apiKey,
       apiUrl: apiUrl,
     );
-    WidgetsFlutterBinding.ensureInitialized();
-    await TolgeeStaticTranslations.init();
 
     instance._config = config;
 

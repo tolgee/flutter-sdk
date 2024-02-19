@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tolgee/src/l10n/tolgee_localization.dart';
-import 'package:tolgee/src/translations/tolgee_remote_translations.dart';
+import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 
 class Tolgee {
   const Tolgee._();
 
-  /// Initializes Tolgee SDK
-  static Future<void> init({
+  static Future<void> initRemote({
     required String apiKey,
     required String apiUrl,
   }) async {
-    await TolgeeRemoteTranslations.init(
-      apiKey: apiKey,
-      apiUrl: apiUrl,
-    );
+    await TolgeeTranslationsStrategy.initRemote(apiKey: apiKey, apiUrl: apiUrl);
+  }
+
+  static Future<void> initStatic() async {
+    await TolgeeTranslationsStrategy.initStatic();
   }
 
   /// Returns the base language
   static Locale get baseLocale {
     return Locale(
-      TolgeeRemoteTranslations.instance.allProjectLanguages.values
+      TolgeeTranslationsStrategy.instance.allProjectLanguages.values
           .firstWhere((element) => element.base)
           .tag,
     );
@@ -27,16 +27,16 @@ class Tolgee {
 
   /// Returns the current locale
   static Locale? get currentLocale =>
-      TolgeeRemoteTranslations.instance.currentLanguage;
+      TolgeeTranslationsStrategy.instance.currentLanguage;
 
   /// Sets the current locale
   static void setCurrentLocale(Locale locale) {
-    TolgeeRemoteTranslations.instance.setCurrentLanguage(locale);
+    TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
   }
 
   /// Returns list of supported locales
   static Iterable<Locale> get supportedLocales {
-    return TolgeeRemoteTranslations.instance.allProjectLanguages.keys
+    return TolgeeTranslationsStrategy.instance.allProjectLanguages.keys
         .map((e) => Locale(e));
   }
 
@@ -46,6 +46,6 @@ class Tolgee {
   }
 
   static void toggleTranslationEnabled() {
-    TolgeeRemoteTranslations.instance.toggleTranslationEnabled();
+    TolgeeTranslationsStrategy.instance.toggleTranslationEnabled();
   }
 }

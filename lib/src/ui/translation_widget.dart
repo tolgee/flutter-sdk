@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/message_format.dart';
-import 'package:tolgee/src/translations/tolgee_remote_translations.dart';
+import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
 
 typedef TranslationGetter = String Function(
@@ -49,7 +49,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
           MaterialPageRoute(
             builder: (context) {
               return TranslationListPopUp(
-                  translationModels: TolgeeRemoteTranslations.instance
+                  translationModels: TolgeeTranslationsStrategy.instance
                       .translationForKeys(_keys)
                       .toList());
             },
@@ -75,20 +75,20 @@ class _TranslationWidgetState extends State<TranslationWidget> {
 
   String _translate(String key, [Map<String, Object>? args]) {
     if (args == null) {
-      return TolgeeRemoteTranslations.instance.translate(key);
+      return TolgeeTranslationsStrategy.instance.translate(key);
     }
     return MessageFormat(
-      TolgeeRemoteTranslations.instance.translate(key),
+      TolgeeTranslationsStrategy.instance.translate(key),
     ).format(args);
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-        listenable: TolgeeRemoteTranslations.instance,
+        listenable: TolgeeTranslationsStrategy.instance,
         builder: (BuildContext context, Widget? child) {
           final isTranslationEnabled =
-              TolgeeRemoteTranslations.instance.isTranslationEnabled;
+              TolgeeTranslationsStrategy.instance.isTranslationEnabled;
 
           if (isTranslationEnabled) {
             return _buildEnabledWidget(context);
