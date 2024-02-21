@@ -6,12 +6,27 @@ import 'package:tolgee/src/utils/tolgee_translation_model_extension.dart';
 
 import 'translation_text_field.dart';
 
+enum TranslationPopUpBackIcon { close, back }
+
+extension TranslationPopUpBackIconExtension on TranslationPopUpBackIcon {
+  IconData get icon {
+    switch (this) {
+      case TranslationPopUpBackIcon.close:
+        return Icons.close;
+      case TranslationPopUpBackIcon.back:
+        return Icons.arrow_back;
+    }
+  }
+}
+
 class TranslationPopUp extends StatefulWidget {
   final TolgeeKeyModel translationModel;
+  final TranslationPopUpBackIcon backIcon;
 
   const TranslationPopUp({
     Key? key,
     required this.translationModel,
+    this.backIcon = TranslationPopUpBackIcon.back,
   }) : super(key: key);
 
   @override
@@ -39,6 +54,10 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(widget.backIcon.icon),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Row(
           children: [
             Text(

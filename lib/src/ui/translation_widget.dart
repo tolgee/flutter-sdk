@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/message_format.dart';
 import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
+import 'package:tolgee/src/ui/translation_pop_up.dart';
 
 typedef TranslationGetter = String Function(
   String key, [
@@ -45,13 +46,26 @@ class _TranslationWidgetState extends State<TranslationWidget> {
 
     return GestureDetector(
       onTap: () {
+        if (_keys.isEmpty) {
+          return;
+        }
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return TranslationListPopUp(
-                  translationModels: TolgeeTranslationsStrategy.instance
+              if (_keys.length == 1) {
+                return TranslationPopUp(
+                  backIcon: TranslationPopUpBackIcon.close,
+                  translationModel: TolgeeTranslationsStrategy.instance
                       .translationForKeys(_keys)
-                      .toList());
+                      .toList()
+                      .first,
+                );
+              } else {
+                return TranslationListPopUp(
+                    translationModels: TolgeeTranslationsStrategy.instance
+                        .translationForKeys(_keys)
+                        .toList());
+              }
             },
           ),
         );
