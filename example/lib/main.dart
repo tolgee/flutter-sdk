@@ -18,6 +18,23 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+extension WidgetExtension on List<Widget> {
+  List<Widget> divided({
+    double? width,
+    double? height,
+  }) {
+    return List<Widget>.generate(
+      length * 2 - 1,
+      (index) => index.isEven
+          ? this[index ~/ 2]
+          : SizedBox(
+              width: width,
+              height: height,
+            ),
+    );
+  }
+}
+
 class _MyAppState extends State<MyApp> {
   List<Locale> supportedLocales = Tolgee.supportedLocales.toList();
 
@@ -33,62 +50,70 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         appBar: AppBar(
-            title: TranslationWidget(
-          builder: (context, tr) => Text(
-            tr('title'),
+          title: TranslationWidget(
+            builder: (context, tr) => Text(
+              tr('title'),
+            ),
           ),
-        )),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var locale in supportedLocales)
-                    OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          Tolgee.setCurrentLocale(locale);
-                        });
-                      },
-                      child: Text(locale.languageCode),
-                    ),
-                ],
-              ),
-              const Text('static text'),
-              const Divider(),
-              const TranslationText('title'),
-              const Divider(),
-              TranslationWidget(
-                builder: (context, tr) => Column(
-                  children: [
-                    Text(
-                      tr('title'),
-                    ),
-                    Text(
-                      tr('subtitle', {'name': 'Marcin'}),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              TranslationWidget(builder: (context, tr) {
-                return OutlinedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Clicked!'),
-                        duration: Duration(milliseconds: 1000),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    tr('button'),
+        ),
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      for (var locale in supportedLocales)
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              Tolgee.setCurrentLocale(locale);
+                            });
+                          },
+                          child: Text(locale.languageCode),
+                        ),
+                    ].divided(width: 8),
                   ),
-                );
-              }),
-            ],
+                ),
+                const Spacer(),
+                const Text('static text'),
+                const Divider(),
+                const TranslationText('title'),
+                const Divider(),
+                TranslationWidget(
+                  builder: (context, tr) => Column(
+                    children: [
+                      Text(
+                        tr('title'),
+                      ),
+                      Text(
+                        tr('subtitle', {'name': 'Marcin'}),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                TranslationWidget(builder: (context, tr) {
+                  return OutlinedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Clicked!'),
+                          duration: Duration(milliseconds: 1000),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      tr('button'),
+                    ),
+                  );
+                }),
+                const Spacer(),
+              ],
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
