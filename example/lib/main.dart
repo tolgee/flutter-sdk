@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tolgee/tolgee.dart';
 
 Future<void> main() async {
-  // Initialize Tolgee with remote translations from Tolgee Cloud.
-  // You can also use static translations by calling `Tolgee.initStatic()`.
-  await Tolgee.initRemote(
+  // Initialize Tolgee. If apiKey and apiUrl are not provided,
+  // the app will be initialized in static mode.
+  // The translations will be read from `lib/tolgee/` directory.
+  await Tolgee.init(
     apiKey: const String.fromEnvironment('TOLGEE_API_KEY'),
     apiUrl: const String.fromEnvironment('TOLGEE_API_URL'),
   );
@@ -117,7 +118,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => Tolgee.toggleTranslationEnabled(),
+          onPressed: () => Tolgee.highlightTolgeeWidgets(),
           tooltip: 'Toggle',
           child: const Icon(Icons.swap_horizontal_circle_outlined),
         ), // This trailing comma makes auto-formatting nicer for build methods.

@@ -32,10 +32,4 @@ class TolgeeKeyModel {
       translations: translationsModels,
     );
   }
-// final String keyNamespaceId;
-// final String? keyNamespace;
-// final List<> keyTags;
-// final String screenshotCount;
-// final String screenshots;
-// final String contextPresent;
 }

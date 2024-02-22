@@ -5,15 +5,25 @@ import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 class Tolgee {
   const Tolgee._();
 
-  static Future<void> initRemote({
-    required String apiKey,
-    required String apiUrl,
+  /// Initializes Tolgee
+  /// [apiKey] is the Tolgee API key
+  /// [apiUrl] is the Tolgee API URL
+  /// If [apiKey] and [apiUrl] are not provided,
+  /// Tolgee will be initialized in static mode.
+  /// If [apiKey] and [apiUrl] are provided,
+  /// Tolgee will be initialized in remote mode.
+  /// In remote mode, translations will be fetched from Tolgee Cloud.
+  /// In static mode, translations will be fetched from local files.
+  static Future<void> init({
+    String? apiKey,
+    String? apiUrl,
   }) async {
-    await TolgeeTranslationsStrategy.initRemote(apiKey: apiKey, apiUrl: apiUrl);
-  }
-
-  static Future<void> initStatic() async {
-    await TolgeeTranslationsStrategy.initStatic();
+    apiKey != null && apiUrl != null
+        ? await TolgeeTranslationsStrategy.initRemote(
+            apiKey: apiKey,
+            apiUrl: apiUrl,
+          )
+        : await TolgeeTranslationsStrategy.initStatic();
   }
 
   /// Returns the base language
@@ -45,7 +55,8 @@ class Tolgee {
     return TolgeeLocalization.localizationsDelegates;
   }
 
-  static void toggleTranslationEnabled() {
+  /// Toggle highlight of Tolgee widgets.
+  static void highlightTolgeeWidgets() {
     TolgeeTranslationsStrategy.instance.toggleTranslationEnabled();
   }
 }
