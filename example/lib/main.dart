@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
                         tr('title'),
                       ),
                       Text(
-                        tr('subtitle', {'name': 'Marcin'}),
+                        tr('subtitle', {'name': 'John'}),
                       ),
                     ],
                   ),
