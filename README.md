@@ -5,23 +5,7 @@ A multiplatform Flutter SDK for the Tolgee localization platform.
 The SDK is currently in beta. We're working on adding more features and improving the existing ones. If you have any
 suggestions, feel free to open an issue or a pull request!
 
-![Tolgee CLI screenshot](docs/assets/recording.mov)
-
-## Installation
-The Tolgee CLI is published as a NPM package. You simply need to install it, and you're good to go!
-
-```sh
-# npm
-npm i --global @tolgee/cli
-
-# Yarn
-yarn global add @tolgee/cli
-
-# pnpm
-pnpm add --global @tolgee/cli
-```
-
-See our [documentation](https://tolgee.io/tolgee-cli/installation) for more information.
+![Tolgee FLutter SDK - example usage](docs/assets/app-showcase.gif)
 
 ## Usage
 
@@ -124,7 +108,7 @@ See our [documentation](https://tolgee.io/tolgee-cli/installation) for more info
             onPressed: () => Tolgee.highlightTolgeeWidgets(),
             tooltip: 'Toggle',
             child: const Icon(Icons.swap_horizontal_circle_outlined),
-          ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
         ),
       );
     }
