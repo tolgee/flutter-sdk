@@ -5,7 +5,7 @@ A multiplatform Flutter SDK for the Tolgee localization platform.
 The SDK is currently in beta. We're working on adding more features and improving the existing ones. If you have any
 suggestions, feel free to open an issue or a pull request!
 
-![Tolgee FLutter SDK - example usage](docs/assets/app-showcase.gif)
+![Tolgee FLutter SDK - example usage](doc/assets/app-showcase.gif)
 
 ## Usage
 
