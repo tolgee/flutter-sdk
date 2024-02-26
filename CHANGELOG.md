@@ -1,4 +1,4 @@
-## 0.0.1 (2024-02-25)
+## 1.0.1 (2024-02-25)
 ### New
 - Added initial files.
 - Added `Tolgee` class to provide access to the Tolgee SDK methods.

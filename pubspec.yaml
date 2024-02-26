@@ -1,6 +1,6 @@
 name: tolgee
 description: A Tolgee Flutter SDK for Flutter applications.
-version: 0.0.1
+version: 1.0.1
 homepage: https://tolgee.io/
 
 environment:
