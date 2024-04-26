@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.0.1
+  http: ^0.13.6
   collection: ^1.14.12
   flutter_localizations :
     sdk : flutter
