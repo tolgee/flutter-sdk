@@ -66,6 +66,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     final value = _translations.firstWhereOrNull(
       (element) => element.keyName == key,
     );
+
     if (value == null) {
       return key;
     }
