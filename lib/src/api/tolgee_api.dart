@@ -54,8 +54,6 @@ class TolgeeApi {
         allTranslations.addAll(body.keys);
         totalPages = body.totalPages;
         currentPage++;
-      } else {
-        throw Exception('Failed to load translations');
       }
     }
 

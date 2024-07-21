@@ -50,8 +50,8 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   }
 
   @override
-  String translate(String key) {
-    return _tolgeeTranslations?.translate(key) ?? key;
+  String? translate(String key) {
+    return _tolgeeTranslations?.translate(key);
   }
 
   @override

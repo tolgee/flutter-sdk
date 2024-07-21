@@ -12,7 +12,7 @@ extension TolgeeKeyModelExtension on TolgeeKeyModel {
       String translationText = 'Not translated yet';
 
       if (translation != null) {
-        translationText = translation.text;
+        translationText = translation.text ?? '';
       }
 
       return '$languageCode $translationText';

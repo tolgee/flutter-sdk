@@ -15,7 +15,11 @@ class TolgeeTranslationsResponse {
     final jsonBody = jsonDecode(jsonString);
     final keys = jsonBody['_embedded']['keys'] as List;
     final keysModels = keys.map((key) {
-      return TolgeeKeyModel.fromJson(key);
+      try {
+        return TolgeeKeyModel.fromJson(key);
+      } catch (e) {
+        return TolgeeKeyModel(keyId: key, keyName: key, translations: {});
+      }
     }).toList();
     final page = jsonBody['page'];
     return TolgeeTranslationsResponse(

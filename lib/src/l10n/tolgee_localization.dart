@@ -28,7 +28,7 @@ class TolgeeLocalization {
     ];
   }
 
-  String translate(String key) {
+  String? translate(String key) {
     return TolgeeTranslationsStrategy.instance.translate(key);
   }
 }

@@ -15,7 +15,7 @@ abstract class TolgeeTranslations {
     required TolgeeKeyModel updatedKeyModel,
   });
 
-  String translate(String key);
+  String? translate(String key);
 
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys);
 

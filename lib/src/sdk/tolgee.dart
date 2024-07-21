@@ -61,7 +61,8 @@ class Tolgee {
   }
 
   static String translate({required String key, String? defaultValue}) {
-    String translatedValue = TolgeeTranslationsStrategy.instance.translate(key);
-    return translatedValue == key ? defaultValue ?? key : translatedValue;
+    String? translatedValue =
+        TolgeeTranslationsStrategy.instance.translate(key);
+    return translatedValue ?? defaultValue ?? key;
   }
 }

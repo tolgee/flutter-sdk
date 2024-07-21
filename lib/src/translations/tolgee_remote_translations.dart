@@ -57,7 +57,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
   @override
-  String translate(String key) {
+  String? translate(String key) {
     final currentLanguage = _currentLanguage;
     if (currentLanguage == null) {
       return key;

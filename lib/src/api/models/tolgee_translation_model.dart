@@ -1,5 +1,5 @@
 class TolgeeTranslationModel {
-  final String text;
+  final String? text;
 
   const TolgeeTranslationModel({
     required this.text,
