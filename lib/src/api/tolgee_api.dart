@@ -48,7 +48,9 @@ class TolgeeApi {
       );
 
       if (response.statusCode == 200) {
-        final body = TolgeeTranslationsResponse.fromJsonString(response.body);
+        final utf8DecodedBody = utf8.decode(response.bodyBytes);
+
+        final body = TolgeeTranslationsResponse.fromJsonString(utf8DecodedBody);
         allTranslations.addAll(body.keys);
         totalPages = body.totalPages;
         currentPage++;
