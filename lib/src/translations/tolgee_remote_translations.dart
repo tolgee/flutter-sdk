@@ -9,6 +9,25 @@ import '../api/requests/update_translations_request.dart';
 import '../api/tolgee_api.dart';
 import '../api/tolgee_project_language.dart';
 
+String normalizeLanguageCode(String languageCode) {
+  // Split the language code by underscore
+  List<String> parts = languageCode.split('_');
+
+  if (parts.length != 2) {
+    // If the format is incorrect, return the original code or handle the error
+    return languageCode;
+  }
+
+  // Convert the first part (language) to lowercase
+  String language = parts[0].toLowerCase();
+
+  // Convert the second part (country) to uppercase
+  String country = parts[1].toUpperCase();
+
+  // Join the parts with a hyphen
+  return '$language-$country';
+}
+
 class TolgeeRemoteTranslations extends ChangeNotifier
     implements TolgeeTranslations {
   TolgeeConfig? _config;
@@ -68,12 +87,13 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     );
 
     if (value == null) {
-      return key;
+      return null;
     }
 
-    final translation = value.translations[currentLanguage.toLanguageTag()];
+    final translation = value
+        .translations[normalizeLanguageCode(currentLanguage.toLanguageTag())];
     if (translation == null) {
-      return key;
+      return null;
     }
 
     return translation.text;
