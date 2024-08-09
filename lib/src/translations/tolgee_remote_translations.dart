@@ -11,21 +11,22 @@ import '../api/tolgee_project_language.dart';
 
 String normalizeLanguageCode(String languageCode) {
   // Split the language code by underscore
-  List<String> parts = languageCode.split('_');
+  List<String> parts = languageCode.split('-');
 
   if (parts.length != 2) {
     // If the format is incorrect, return the original code or handle the error
-    return languageCode;
+
+    return languageCode.toLowerCase();
   }
 
   // Convert the first part (language) to lowercase
   String language = parts[0].toLowerCase();
 
   // Convert the second part (country) to uppercase
-  String country = parts[1].toUpperCase();
+  //We don`t need this country code in normalizeLanguageCode  String country = parts[1].toUpperCase();
 
   // Join the parts with a hyphen
-  return '$language-$country';
+  return language; // We don`t need country code
 }
 
 class TolgeeRemoteTranslations extends ChangeNotifier
