@@ -15,18 +15,14 @@ String normalizeLanguageCode(String languageCode) {
 
   if (parts.length != 2) {
     // If the format is incorrect, return the original code or handle the error
-
     return languageCode.toLowerCase();
   }
 
   // Convert the first part (language) to lowercase
   String language = parts[0].toLowerCase();
 
-  // Convert the second part (country) to uppercase
-  //We don`t need this country code in normalizeLanguageCode  String country = parts[1].toUpperCase();
-
   // Join the parts with a hyphen
-  return language; // We don`t need country code
+  return language;
 }
 
 class TolgeeRemoteTranslations extends ChangeNotifier
@@ -122,6 +118,9 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
     final translations = await TolgeeApi.getTranslations(
       config: config,
+      projectLanguages: TolgeeRemoteTranslations.instance._projectLanguages =
+          Map.fromEntries(allProjectLanguages.map(
+              (e) => MapEntry(e.tag, e))),
     );
 
     TolgeeLogger.debug('jsonBody: $translations');
