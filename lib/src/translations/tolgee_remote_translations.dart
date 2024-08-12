@@ -11,7 +11,7 @@ import '../api/tolgee_project_language.dart';
 
 String normalizeLanguageCode(String languageCode) {
   // Split the language code by underscore
-  List<String> parts = languageCode.split('-');
+  List<String> parts = languageCode.split(RegExp(r'[_-]'));
 
   if (parts.length != 2) {
     // If the format is incorrect, return the original code or handle the error
