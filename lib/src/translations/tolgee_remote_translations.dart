@@ -118,9 +118,8 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
     final translations = await TolgeeApi.getTranslations(
       config: config,
-      projectLanguages: TolgeeRemoteTranslations.instance._projectLanguages =
-          Map.fromEntries(allProjectLanguages.map(
-              (e) => MapEntry(e.tag, e))),
+      projectLanguages:
+          Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e))),
     );
 
     TolgeeLogger.debug('jsonBody: $translations');
