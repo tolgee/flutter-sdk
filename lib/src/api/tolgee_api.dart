@@ -32,17 +32,15 @@ class TolgeeApi {
 
   /// Gets all translations in Tolgee project
   static Future<TolgeeTranslationsResponse> getTranslations(
-      {required TolgeeConfig config,
-      required Map<String, TolgeeProjectLanguage> projectLanguages}) async {
+      {required TolgeeConfig config, required String currentLanguage}) async {
     List<TolgeeKeyModel> allTranslations = [];
-    String languages = projectLanguages.keys.join(',');
     int currentPage = 0;
     int totalPages = 1; // Initialize to 1 to enter the loop
 
     while (currentPage < totalPages) {
       final response = await get(
         Uri.parse(
-            '${config.apiUrl}/projects/translations?page=$currentPage&size=20&sort=keyId,asc&languages=$languages'),
+            '${config.apiUrl}/projects/translations?page=$currentPage&size=20&sort=keyId,asc&languages=$currentLanguage'),
         headers: {
           'X-Api-Key': config.apiKey,
         },

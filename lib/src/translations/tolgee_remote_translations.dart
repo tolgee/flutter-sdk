@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tolgee/src/api/responses/tolgee_translations_response.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/logger/logger.dart';
 import 'package:tolgee/src/translations/tolgee_translations.dart';
@@ -33,6 +34,8 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
   bool _isTranslationEnabled = true;
 
+  TolgeeTranslationsResponse? translations;
+
   @override
   bool get isTranslationEnabled => _isTranslationEnabled;
 
@@ -44,8 +47,12 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? get currentLanguage => _currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) {
+  void setCurrentLanguage(Locale locale) async {
     _currentLanguage = locale;
+    translations = await TolgeeApi.getTranslations(
+        config: _config!, currentLanguage: locale.toString());
+    TolgeeLogger.debug('jsonBody: $translations');
+    TolgeeRemoteTranslations.instance._translations = translations!.keys;
     notifyListeners();
   }
 
@@ -99,10 +106,10 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   static final instance = TolgeeRemoteTranslations._();
   TolgeeRemoteTranslations._();
 
-  static Future<void> init({
-    required String apiKey,
-    required String apiUrl,
-  }) async {
+  static Future<void> init(
+      {required String apiKey,
+      required String apiUrl,
+      required String currentLanguage}) async {
     final config = TolgeeConfig(
       apiKey: apiKey,
       apiUrl: apiUrl,
@@ -118,8 +125,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
     final translations = await TolgeeApi.getTranslations(
       config: config,
-      projectLanguages:
-          Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e))),
+      currentLanguage: currentLanguage,
     );
 
     TolgeeLogger.debug('jsonBody: $translations');

@@ -10,8 +10,9 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   static Future<void> initRemote({
     required String apiKey,
     required String apiUrl,
+    required String currentLanguage
   }) async {
-    await TolgeeRemoteTranslations.init(apiKey: apiKey, apiUrl: apiUrl);
+    await TolgeeRemoteTranslations.init(apiKey: apiKey, apiUrl: apiUrl,currentLanguage: currentLanguage);
     TolgeeTranslationsStrategy.instance._tolgeeTranslations =
         TolgeeRemoteTranslations.instance;
 
