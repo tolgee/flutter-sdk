@@ -41,8 +41,8 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   Locale? get currentLanguage => _tolgeeTranslations?.currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) {
-    _tolgeeTranslations?.setCurrentLanguage(locale);
+  Future<void>setCurrentLanguage(Locale locale) async{
+    await _tolgeeTranslations?.setCurrentLanguage(locale);
   }
 
   @override

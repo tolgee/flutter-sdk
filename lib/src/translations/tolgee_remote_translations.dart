@@ -47,7 +47,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? get currentLanguage => _currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) async {
+  Future<void> setCurrentLanguage(Locale locale) async {
     _currentLanguage = locale;
     translations = await TolgeeApi.getTranslations(
         config: _config!, currentLanguage: locale.toString());

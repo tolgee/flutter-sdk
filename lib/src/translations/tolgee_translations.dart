@@ -7,7 +7,7 @@ abstract class TolgeeTranslations {
 
   Locale? get currentLanguage;
 
-  void setCurrentLanguage(Locale locale);
+  Future <void> setCurrentLanguage(Locale locale);
 
   void toggleTranslationEnabled();
 

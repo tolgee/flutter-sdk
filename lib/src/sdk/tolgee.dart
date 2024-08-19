@@ -39,8 +39,8 @@ class Tolgee {
       TolgeeTranslationsStrategy.instance.currentLanguage;
 
   /// Sets the current locale
-  static void setCurrentLocale(Locale locale) {
-    TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
+  static Future<void> setCurrentLocale(Locale locale) async {
+    await TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
   }
 
   /// Returns list of supported locales
