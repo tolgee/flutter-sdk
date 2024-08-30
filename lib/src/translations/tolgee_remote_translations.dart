@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tolgee/src/api/responses/tolgee_translations_response.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/logger/logger.dart';
 import 'package:tolgee/src/translations/tolgee_translations.dart';
@@ -11,21 +12,18 @@ import '../api/tolgee_project_language.dart';
 
 String normalizeLanguageCode(String languageCode) {
   // Split the language code by underscore
-  List<String> parts = languageCode.split('_');
+  List<String> parts = languageCode.split(RegExp(r'[_-]'));
 
   if (parts.length != 2) {
     // If the format is incorrect, return the original code or handle the error
-    return languageCode;
+    return languageCode.toLowerCase();
   }
 
   // Convert the first part (language) to lowercase
   String language = parts[0].toLowerCase();
 
-  // Convert the second part (country) to uppercase
-  String country = parts[1].toUpperCase();
-
   // Join the parts with a hyphen
-  return '$language-$country';
+  return language;
 }
 
 class TolgeeRemoteTranslations extends ChangeNotifier
@@ -35,6 +33,8 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? _currentLanguage;
 
   bool _isTranslationEnabled = true;
+
+  TolgeeTranslationsResponse? translations;
 
   @override
   bool get isTranslationEnabled => _isTranslationEnabled;
@@ -47,8 +47,12 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? get currentLanguage => _currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) {
+  Future<void> setCurrentLanguage(Locale locale) async {
     _currentLanguage = locale;
+    translations = await TolgeeApi.getTranslations(
+        config: _config!, currentLanguage: locale.toString());
+    TolgeeLogger.debug('jsonBody: $translations');
+    TolgeeRemoteTranslations.instance._translations = translations!.keys;
     notifyListeners();
   }
 
@@ -102,10 +106,10 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   static final instance = TolgeeRemoteTranslations._();
   TolgeeRemoteTranslations._();
 
-  static Future<void> init({
-    required String apiKey,
-    required String apiUrl,
-  }) async {
+  static Future<void> init(
+      {required String apiKey,
+      required String apiUrl,
+      required String currentLanguage}) async {
     final config = TolgeeConfig(
       apiKey: apiKey,
       apiUrl: apiUrl,
@@ -121,6 +125,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
     final translations = await TolgeeApi.getTranslations(
       config: config,
+      currentLanguage: currentLanguage,
     );
 
     TolgeeLogger.debug('jsonBody: $translations');

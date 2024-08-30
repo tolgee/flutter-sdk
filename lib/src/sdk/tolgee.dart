@@ -14,12 +14,11 @@ class Tolgee {
   /// Tolgee will be initialized in remote mode.
   /// In remote mode, translations will be fetched from Tolgee Cloud.
   /// In static mode, translations will be fetched from local files.
-  static Future<void> init({
-    String? apiKey,
-    String? apiUrl,
-  }) async {
-    apiKey != null && apiUrl != null
+  static Future<void> init(
+      {String? apiKey, String? apiUrl, String? currentLanguage}) async {
+    apiKey != null && apiUrl != null && currentLanguage != null
         ? await TolgeeTranslationsStrategy.initRemote(
+            currentLanguage: currentLanguage,
             apiKey: apiKey,
             apiUrl: apiUrl,
           )
@@ -40,8 +39,8 @@ class Tolgee {
       TolgeeTranslationsStrategy.instance.currentLanguage;
 
   /// Sets the current locale
-  static void setCurrentLocale(Locale locale) {
-    TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
+  static Future<void> setCurrentLocale(Locale locale) async {
+    await TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
   }
 
   /// Returns list of supported locales

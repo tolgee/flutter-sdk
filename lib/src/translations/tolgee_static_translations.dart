@@ -93,7 +93,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   Locale? get currentLanguage => _currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) {
+  Future <void> setCurrentLanguage(Locale locale) async{
     _currentLanguage = locale;
   }
 
