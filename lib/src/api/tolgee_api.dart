@@ -34,14 +34,30 @@ class TolgeeApi {
   static Future<TolgeeTranslationsResponse> getTranslations({
     required TolgeeConfig config,
   }) async {
-    final response = await get(
-        Uri.parse('${config.apiUrl}/projects/translations'),
-        headers: {
-          'X-Api-Key': config.apiKey,
-        });
+    int currentPage = 0;
+    List<TolgeeKeyModel> translations = [];
 
-    final body = TolgeeTranslationsResponse.fromJsonString(response.body);
-    return body;
+    while (true) {
+      final response = await get(
+          Uri.parse(
+              '${config.apiUrl}/projects/translations?size=50&page=$currentPage'),
+          headers: {
+            'X-Api-Key':
+                config.apiKey, // add the API key to the headers of the request
+          });
+
+      final body = TolgeeTranslationsResponse.fromJsonString(response.body);
+
+      translations.addAll(body.keys);
+      currentPage++;
+
+      final jsonBody = jsonDecode(response.body);
+      if (currentPage > jsonBody['page']['totalPages'] - 1) {
+        break;
+      }
+    }
+
+    return TolgeeTranslationsResponse(translations);
   }
 
   /// Updates translations in Tolgee project
