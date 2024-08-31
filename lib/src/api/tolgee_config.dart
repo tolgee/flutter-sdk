@@ -6,12 +6,20 @@ class TolgeeConfig {
   /// The URL of your Tolgee server.
   final String apiUrl;
 
+  // CDN URL
+  final String? cdnUrl;
+
+  // Should use CDN
+  final bool useCDN;
+
   /// Creates a new TolgeeConfig instance.
   ///
   /// The [apiKey] and [apiUrl] parameters must not be null.
   const TolgeeConfig({
     required this.apiKey,
     required this.apiUrl,
+    this.cdnUrl,
+    this.useCDN = false,
   });
 
   @override

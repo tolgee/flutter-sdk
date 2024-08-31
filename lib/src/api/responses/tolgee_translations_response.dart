@@ -9,7 +9,10 @@ class TolgeeTranslationsResponse {
   final int currentPage;
 
   const TolgeeTranslationsResponse(
-      this.keys, this.totalPages, this.currentPage);
+    this.keys,
+    this.totalPages,
+    this.currentPage,
+  );
 
   static TolgeeTranslationsResponse fromJsonString(String jsonString) {
     final jsonBody = jsonDecode(jsonString);

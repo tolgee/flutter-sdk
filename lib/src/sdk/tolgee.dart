@@ -14,13 +14,20 @@ class Tolgee {
   /// Tolgee will be initialized in remote mode.
   /// In remote mode, translations will be fetched from Tolgee Cloud.
   /// In static mode, translations will be fetched from local files.
-  static Future<void> init(
-      {String? apiKey, String? apiUrl, String? currentLanguage}) async {
+  static Future<void> init({
+    String? apiKey,
+    String? apiUrl,
+    String? cdnUrl,
+    String? currentLanguage,
+    bool useCDN = false,
+  }) async {
     apiKey != null && apiUrl != null && currentLanguage != null
         ? await TolgeeTranslationsStrategy.initRemote(
             currentLanguage: currentLanguage,
             apiKey: apiKey,
             apiUrl: apiUrl,
+            cdnUrl: cdnUrl,
+            useCDN: useCDN,
           )
         : await TolgeeTranslationsStrategy.initStatic();
   }

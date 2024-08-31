@@ -50,7 +50,9 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Future<void> setCurrentLanguage(Locale locale) async {
     _currentLanguage = locale;
     translations = await TolgeeApi.getTranslations(
-        config: _config!, currentLanguage: locale.toString());
+      config: _config!,
+      currentLanguage: locale.toString(),
+    );
     TolgeeLogger.debug('jsonBody: $translations');
     TolgeeRemoteTranslations.instance._translations = translations!.keys;
     notifyListeners();
@@ -106,13 +108,18 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   static final instance = TolgeeRemoteTranslations._();
   TolgeeRemoteTranslations._();
 
-  static Future<void> init(
-      {required String apiKey,
-      required String apiUrl,
-      required String currentLanguage}) async {
+  static Future<void> init({
+    required String apiKey,
+    required String apiUrl,
+    required String currentLanguage,
+    String? cdnUrl,
+    bool useCDN = false,
+  }) async {
     final config = TolgeeConfig(
       apiKey: apiKey,
       apiUrl: apiUrl,
+      cdnUrl: cdnUrl,
+      useCDN: useCDN,
     );
 
     instance._config = config;

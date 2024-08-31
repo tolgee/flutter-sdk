@@ -10,9 +10,17 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   static Future<void> initRemote({
     required String apiKey,
     required String apiUrl,
-    required String currentLanguage
+    required String currentLanguage,
+    String? cdnUrl,
+    bool useCDN = false,
   }) async {
-    await TolgeeRemoteTranslations.init(apiKey: apiKey, apiUrl: apiUrl,currentLanguage: currentLanguage);
+    await TolgeeRemoteTranslations.init(
+      apiKey: apiKey,
+      apiUrl: apiUrl,
+      currentLanguage: currentLanguage,
+      cdnUrl: cdnUrl,
+      useCDN: useCDN,
+    );
     TolgeeTranslationsStrategy.instance._tolgeeTranslations =
         TolgeeRemoteTranslations.instance;
 
@@ -41,7 +49,7 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   Locale? get currentLanguage => _tolgeeTranslations?.currentLanguage;
 
   @override
-  Future<void>setCurrentLanguage(Locale locale) async{
+  Future<void> setCurrentLanguage(Locale locale) async {
     await _tolgeeTranslations?.setCurrentLanguage(locale);
   }
 
