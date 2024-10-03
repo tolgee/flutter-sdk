@@ -8,6 +8,7 @@ import 'package:tolgee/src/api/responses/tolgee_translations_response.dart';
 import 'package:tolgee/src/api/responses/update_translations_response.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/api/tolgee_project_language.dart';
+import 'package:tolgee/src/logger/logger.dart';
 
 import 'models/tolgee_key_model.dart';
 
@@ -47,6 +48,7 @@ class TolgeeApi {
     List<TolgeeKeyModel> allTranslations = [];
     int currentPage = 0;
     int totalPages = 1; // Initialize to 1 to enter the loop
+    int retries = 3;
 
     while (currentPage < totalPages) {
       final response = await get(
@@ -65,6 +67,12 @@ class TolgeeApi {
         allTranslations.addAll(body.keys);
         totalPages = body.totalPages;
         currentPage++;
+      } else {
+        retries--;
+        if (retries <= 0) {
+          TolgeeLogger.warning('Failed to fetch translations');
+          return const TolgeeTranslationsResponse([], 0, 0);
+        }
       }
     }
 

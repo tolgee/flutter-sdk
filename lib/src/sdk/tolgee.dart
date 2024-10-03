@@ -21,7 +21,7 @@ class Tolgee {
     String? currentLanguage,
     bool useCDN = false,
   }) async {
-    apiKey != null && apiUrl != null && currentLanguage != null
+    apiKey != null && apiUrl != null
         ? await TolgeeTranslationsStrategy.initRemote(
             currentLanguage: currentLanguage,
             apiKey: apiKey,
@@ -29,7 +29,7 @@ class Tolgee {
             cdnUrl: cdnUrl,
             useCDN: useCDN,
           )
-        : await TolgeeTranslationsStrategy.initStatic();
+        : await TolgeeTranslationsStrategy.initStatic(currentLanguage);
   }
 
   /// Returns the base language

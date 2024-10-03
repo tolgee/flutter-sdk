@@ -15,7 +15,7 @@ class TolgeeAllProjectLanguagesResponse {
   /// Creates new instance of [TolgeeAllProjectLanguagesResponse] from JSON string
   static fromJsonString(String jsonString) {
     final jsonBody = jsonDecode(jsonString);
-    final languages = jsonBody['_embedded']['languages'] as List;
+    final languages = jsonBody['_embedded']?['languages'] as List? ?? [];
     final languageModels = languages.map((key) {
       final name = key['name'] as String;
       final tag = key['tag'] as String;

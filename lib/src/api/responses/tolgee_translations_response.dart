@@ -16,7 +16,7 @@ class TolgeeTranslationsResponse {
 
   static TolgeeTranslationsResponse fromJsonString(String jsonString) {
     final jsonBody = jsonDecode(jsonString);
-    final keys = jsonBody['_embedded']['keys'] as List;
+    final keys = jsonBody['_embedded']?['keys'] as List? ?? [];
     final keysModels = keys.map((key) {
       try {
         return TolgeeKeyModel.fromJson(key);

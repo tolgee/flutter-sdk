@@ -12,7 +12,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
   Set<TolgeeKeyModel> _translations = {};
 
-  static Future<void> init() async {
+  static Future<void> init(String? currentLanguage) async {
     WidgetsFlutterBinding.ensureInitialized();
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
 
@@ -75,6 +75,7 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
     }
 
     instance._currentLanguage = Locale(
+      currentLanguage ??
       projectLanguages.values.firstWhere((element) => element.base).tag,
     );
     instance._projectLanguages = projectLanguages;
@@ -103,17 +104,16 @@ class TolgeeStaticTranslations implements TolgeeTranslations {
   }
 
   @override
-  String translate(String key) {
+  String? translate(String key) {
     final languageCode = _currentLanguage?.languageCode;
     if (languageCode == null) {
-      return key;
+      return null;
     }
 
     return _translations
             .firstWhere((element) => element.keyName == key)
             .translations[languageCode]
-            ?.text ??
-        key;
+            ?.text;
   }
 
   @override

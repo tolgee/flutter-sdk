@@ -10,7 +10,7 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
   static Future<void> initRemote({
     required String apiKey,
     required String apiUrl,
-    required String currentLanguage,
+    required String? currentLanguage,
     String? cdnUrl,
     bool useCDN = false,
   }) async {
@@ -21,21 +21,30 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
       cdnUrl: cdnUrl,
       useCDN: useCDN,
     );
-    TolgeeTranslationsStrategy.instance._tolgeeTranslations =
+    TolgeeTranslationsStrategy.instance.__tolgeeTranslations =
         TolgeeRemoteTranslations.instance;
 
     TolgeeRemoteTranslations.instance.addListener(() {
       TolgeeTranslationsStrategy.instance.notifyListeners();
     });
+    TolgeeTranslationsStrategy.instance._initialized = true;
   }
 
-  static Future<void> initStatic() async {
-    await TolgeeStaticTranslations.init();
-    TolgeeTranslationsStrategy.instance._tolgeeTranslations =
+  static Future<void> initStatic(String? currentLanguage) async {
+    await TolgeeStaticTranslations.init(currentLanguage);
+    TolgeeTranslationsStrategy.instance.__tolgeeTranslations =
         TolgeeStaticTranslations.instance;
+    TolgeeTranslationsStrategy.instance._initialized = true;
   }
 
-  TolgeeTranslations? _tolgeeTranslations;
+  bool _initialized = false;
+  late final TolgeeTranslations __tolgeeTranslations;
+  TolgeeTranslations get _tolgeeTranslations {
+    if (!_initialized) {
+      throw Exception("Tolgee integration is not initialized");
+    }
+    return __tolgeeTranslations;
+  }
   static final TolgeeTranslationsStrategy instance =
       TolgeeTranslationsStrategy._();
 
@@ -43,36 +52,45 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
 
   @override
   Map<String, TolgeeProjectLanguage> get allProjectLanguages =>
-      _tolgeeTranslations?.allProjectLanguages ?? {};
+      _tolgeeTranslations.allProjectLanguages;
 
   @override
-  Locale? get currentLanguage => _tolgeeTranslations?.currentLanguage;
+  Locale? get currentLanguage => _tolgeeTranslations.currentLanguage;
 
   @override
   Future<void> setCurrentLanguage(Locale locale) async {
-    await _tolgeeTranslations?.setCurrentLanguage(locale);
+    await _tolgeeTranslations.setCurrentLanguage(locale);
   }
 
   @override
   void toggleTranslationEnabled() {
-    _tolgeeTranslations?.toggleTranslationEnabled();
+    if (!_initialized) {
+      return;
+    }
+    _tolgeeTranslations.toggleTranslationEnabled();
   }
 
   @override
   String? translate(String key) {
-    return _tolgeeTranslations?.translate(key);
+    if (!_initialized) {
+      return null;
+    }
+    return _tolgeeTranslations.translate(key);
   }
 
   @override
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys) {
-    return _tolgeeTranslations?.translationForKeys(keys) ?? {};
+    if (!_initialized) {
+      return {};
+    }
+    return _tolgeeTranslations.translationForKeys(keys);
   }
 
   @override
   void updateKeyModel({
     required TolgeeKeyModel updatedKeyModel,
   }) {
-    _tolgeeTranslations?.updateKeyModel(updatedKeyModel: updatedKeyModel);
+    _tolgeeTranslations.updateKeyModel(updatedKeyModel: updatedKeyModel);
   }
 
   @override
@@ -80,12 +98,13 @@ class TolgeeTranslationsStrategy extends ChangeNotifier
     required String key,
     required Map<String, String> translations,
   }) {
-    return _tolgeeTranslations?.updateTranslations(
-            key: key, translations: translations) ??
-        Future.value();
+    return _tolgeeTranslations.updateTranslations(
+      key: key,
+      translations: translations,
+    );
   }
 
   @override
   bool get isTranslationEnabled =>
-      _tolgeeTranslations?.isTranslationEnabled ?? false;
+      _tolgeeTranslations.isTranslationEnabled;
 }

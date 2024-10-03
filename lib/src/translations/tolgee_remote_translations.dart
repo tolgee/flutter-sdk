@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tolgee/src/api/responses/tolgee_translations_response.dart';
@@ -34,8 +36,6 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
   bool _isTranslationEnabled = true;
 
-  TolgeeTranslationsResponse? translations;
-
   @override
   bool get isTranslationEnabled => _isTranslationEnabled;
 
@@ -48,13 +48,19 @@ class TolgeeRemoteTranslations extends ChangeNotifier
 
   @override
   Future<void> setCurrentLanguage(Locale locale) async {
+    final config = _config;
+
+    if (config == null) {
+      throw Exception('Tolgee is not initialized');
+    }
+
     _currentLanguage = locale;
-    translations = await TolgeeApi.getTranslations(
-      config: _config!,
+    TolgeeTranslationsResponse? translations = await TolgeeApi.getTranslations(
+      config: config,
       currentLanguage: locale.toString(),
     );
     TolgeeLogger.debug('jsonBody: $translations');
-    TolgeeRemoteTranslations.instance._translations = translations!.keys;
+    _translations = translations.keys;
     notifyListeners();
   }
 
@@ -111,7 +117,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   static Future<void> init({
     required String apiKey,
     required String apiUrl,
-    required String currentLanguage,
+    String? currentLanguage,
     String? cdnUrl,
     bool useCDN = false,
   }) async {
@@ -127,19 +133,20 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     final allProjectLanguages = await TolgeeApi.getAllProjectLanguages(
       config: config,
     );
-
     TolgeeLogger.debug('allProjectLanguages: $allProjectLanguages');
-
-    final translations = await TolgeeApi.getTranslations(
-      config: config,
-      currentLanguage: currentLanguage,
-    );
-
-    TolgeeLogger.debug('jsonBody: $translations');
-
     TolgeeRemoteTranslations.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
-    TolgeeRemoteTranslations.instance._translations = translations.keys;
+
+    var selectedLanguage = normalizeLanguageCode(currentLanguage ?? Platform.localeName);
+    var found = allProjectLanguages.firstWhereOrNull(
+      (element) => element.tag == selectedLanguage,
+    );
+    if (found == null && allProjectLanguages.isNotEmpty) {
+      selectedLanguage = allProjectLanguages.first.tag;
+    }
+    TolgeeLogger.debug('selectedLanguage: $selectedLanguage');
+
+    TolgeeRemoteTranslations.instance.setCurrentLanguage(Locale(selectedLanguage));
     TolgeeRemoteTranslations.instance.notifyListeners();
   }
 
