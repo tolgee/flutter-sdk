@@ -7,7 +7,7 @@ abstract class TolgeeTranslations {
 
   Locale? get currentLanguage;
 
-  void setCurrentLanguage(Locale locale);
+  Future <void> setCurrentLanguage(Locale locale);
 
   void toggleTranslationEnabled();
 
@@ -15,7 +15,7 @@ abstract class TolgeeTranslations {
     required TolgeeKeyModel updatedKeyModel,
   });
 
-  String translate(String key);
+  String? translate(String key);
 
   Set<TolgeeKeyModel> translationForKeys(Set<String> keys);
 

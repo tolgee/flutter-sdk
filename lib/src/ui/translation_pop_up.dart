@@ -105,7 +105,7 @@ class _TranslationPopUpState extends State<TranslationPopUp> {
                     await TolgeeRemoteTranslations.instance.updateTranslations(
                       key: widget.translationModel.keyName,
                       translations: widget.translationModel.translations.map(
-                        (key, value) => MapEntry(key, value.text),
+                        (key, value) => MapEntry(key, value.text ?? ''),
                       ),
                     );
                     if (mounted) {

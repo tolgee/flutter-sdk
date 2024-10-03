@@ -12,7 +12,6 @@ class TolgeeLocalization {
   }
 
   static Future<TolgeeLocalization> load(Locale locale) async {
-    Tolgee.setCurrentLocale(locale);
     return const TolgeeLocalization._();
   }
 
@@ -28,7 +27,7 @@ class TolgeeLocalization {
     ];
   }
 
-  String translate(String key) {
+  String? translate(String key) {
     return TolgeeTranslationsStrategy.instance.translate(key);
   }
 }

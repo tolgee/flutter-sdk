@@ -88,12 +88,11 @@ class _TranslationWidgetState extends State<TranslationWidget> {
   }
 
   String _translate(String key, [Map<String, Object>? args]) {
+    final result = TolgeeTranslationsStrategy.instance.translate(key) ?? key;
     if (args == null) {
-      return TolgeeTranslationsStrategy.instance.translate(key);
+      return result;
     }
-    return MessageFormat(
-      TolgeeTranslationsStrategy.instance.translate(key),
-    ).format(args);
+    return MessageFormat(result).format(args);
   }
 
   @override

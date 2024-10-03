@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tolgee/src/api/responses/tolgee_translations_response.dart';
 import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/logger/logger.dart';
 import 'package:tolgee/src/translations/tolgee_translations.dart';
@@ -8,6 +11,22 @@ import '../api/models/tolgee_key_model.dart';
 import '../api/requests/update_translations_request.dart';
 import '../api/tolgee_api.dart';
 import '../api/tolgee_project_language.dart';
+
+String normalizeLanguageCode(String languageCode) {
+  // Split the language code by underscore
+  List<String> parts = languageCode.split(RegExp(r'[_-]'));
+
+  if (parts.length != 2) {
+    // If the format is incorrect, return the original code or handle the error
+    return languageCode.toLowerCase();
+  }
+
+  // Convert the first part (language) to lowercase
+  String language = parts[0].toLowerCase();
+
+  // Join the parts with a hyphen
+  return language;
+}
 
 class TolgeeRemoteTranslations extends ChangeNotifier
     implements TolgeeTranslations {
@@ -28,8 +47,20 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Locale? get currentLanguage => _currentLanguage;
 
   @override
-  void setCurrentLanguage(Locale locale) {
+  Future<void> setCurrentLanguage(Locale locale) async {
+    final config = _config;
+
+    if (config == null) {
+      throw Exception('Tolgee is not initialized');
+    }
+
     _currentLanguage = locale;
+    TolgeeTranslationsResponse? translations = await TolgeeApi.getTranslations(
+      config: config,
+      currentLanguage: locale.toString(),
+    );
+    TolgeeLogger.debug('jsonBody: $translations');
+    _translations = translations.keys;
     notifyListeners();
   }
 
@@ -57,7 +88,7 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   Map<String, TolgeeProjectLanguage> _projectLanguages = {};
 
   @override
-  String translate(String key) {
+  String? translate(String key) {
     final currentLanguage = _currentLanguage;
     if (currentLanguage == null) {
       return key;
@@ -66,13 +97,15 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     final value = _translations.firstWhereOrNull(
       (element) => element.keyName == key,
     );
+
     if (value == null) {
-      return key;
+      return null;
     }
 
-    final translation = value.translations[currentLanguage.toLanguageTag()];
+    final translation = value
+        .translations[normalizeLanguageCode(currentLanguage.toLanguageTag())];
     if (translation == null) {
-      return key;
+      return null;
     }
 
     return translation.text;
@@ -84,10 +117,15 @@ class TolgeeRemoteTranslations extends ChangeNotifier
   static Future<void> init({
     required String apiKey,
     required String apiUrl,
+    String? currentLanguage,
+    String? cdnUrl,
+    bool useCDN = false,
   }) async {
     final config = TolgeeConfig(
       apiKey: apiKey,
       apiUrl: apiUrl,
+      cdnUrl: cdnUrl,
+      useCDN: useCDN,
     );
 
     instance._config = config;
@@ -95,18 +133,20 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     final allProjectLanguages = await TolgeeApi.getAllProjectLanguages(
       config: config,
     );
-
     TolgeeLogger.debug('allProjectLanguages: $allProjectLanguages');
-
-    final translations = await TolgeeApi.getTranslations(
-      config: config,
-    );
-
-    TolgeeLogger.debug('jsonBody: $translations');
-
     TolgeeRemoteTranslations.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
-    TolgeeRemoteTranslations.instance._translations = translations.keys;
+
+    var selectedLanguage = normalizeLanguageCode(currentLanguage ?? Platform.localeName);
+    var found = allProjectLanguages.firstWhereOrNull(
+      (element) => element.tag == selectedLanguage,
+    );
+    if (found == null && allProjectLanguages.isNotEmpty) {
+      selectedLanguage = allProjectLanguages.first.tag;
+    }
+    TolgeeLogger.debug('selectedLanguage: $selectedLanguage');
+
+    TolgeeRemoteTranslations.instance.setCurrentLanguage(Locale(selectedLanguage));
     TolgeeRemoteTranslations.instance.notifyListeners();
   }
 

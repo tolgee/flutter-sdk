@@ -17,13 +17,19 @@ class Tolgee {
   static Future<void> init({
     String? apiKey,
     String? apiUrl,
+    String? cdnUrl,
+    String? currentLanguage,
+    bool useCDN = false,
   }) async {
     apiKey != null && apiUrl != null
         ? await TolgeeTranslationsStrategy.initRemote(
+            currentLanguage: currentLanguage,
             apiKey: apiKey,
             apiUrl: apiUrl,
+            cdnUrl: cdnUrl,
+            useCDN: useCDN,
           )
-        : await TolgeeTranslationsStrategy.initStatic();
+        : await TolgeeTranslationsStrategy.initStatic(currentLanguage);
   }
 
   /// Returns the base language
@@ -40,8 +46,8 @@ class Tolgee {
       TolgeeTranslationsStrategy.instance.currentLanguage;
 
   /// Sets the current locale
-  static void setCurrentLocale(Locale locale) {
-    TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
+  static Future<void> setCurrentLocale(Locale locale) async {
+    await TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
   }
 
   /// Returns list of supported locales
@@ -58,5 +64,11 @@ class Tolgee {
   /// Toggle highlight of Tolgee widgets.
   static void highlightTolgeeWidgets() {
     TolgeeTranslationsStrategy.instance.toggleTranslationEnabled();
+  }
+
+  static String translate({required String key, String? defaultValue}) {
+    String? translatedValue =
+        TolgeeTranslationsStrategy.instance.translate(key);
+    return translatedValue ?? defaultValue ?? key;
   }
 }
