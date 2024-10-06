@@ -1,3 +1,12 @@
+## 1.1.0 (2024-10-06)
+### New
+- Language fetching improvements
+- Added CDN Support
+### Fixed
+- Fixed setting custom language
+- Fixed language code normalization
+
+
 ## 1.0.1 (2024-02-25)
 ### New
 - Added initial files.
