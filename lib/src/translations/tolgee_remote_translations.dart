@@ -137,7 +137,14 @@ class TolgeeRemoteTranslations extends ChangeNotifier
     TolgeeRemoteTranslations.instance._projectLanguages =
         Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
 
-    var selectedLanguage = normalizeLanguageCode(currentLanguage ?? Platform.localeName);
+    var selectedLanguage = null;
+    try {
+      selectedLanguage = normalizeLanguageCode(
+          currentLanguage ?? Platform.localeName
+      );
+    } catch (e) {
+      TolgeeLogger.warning('Failed to get current language: $e');
+    }
     var found = allProjectLanguages.firstWhereOrNull(
       (element) => element.tag == selectedLanguage,
     );
