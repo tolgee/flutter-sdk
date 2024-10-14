@@ -95,6 +95,10 @@ class _MyAppState extends State<MyApp> {
                       ),
                     ],
                   ),
+                  // enabledBoxDecoration: BoxDecoration(
+                  //     color: Colors.blueAccent.withOpacity(0.2),
+                  //     borderRadius: BorderRadius.circular(8)
+                  // ),
                 ),
                 const Divider(),
                 TranslationWidget(builder: (context, tr) {
