@@ -15,9 +15,14 @@ typedef TranslatedWidgetBuilder = Widget Function(
 
 class TranslationWidget extends StatefulWidget {
   final TranslatedWidgetBuilder builder;
+
+  /// Enabled Custom BoxDecoration
+  final BoxDecoration? enabledBoxDecoration;
+
   const TranslationWidget({
     super.key,
     required this.builder,
+    this.enabledBoxDecoration,
   });
 
   @override
@@ -72,7 +77,7 @@ class _TranslationWidgetState extends State<TranslationWidget> {
       },
       behavior: HitTestBehavior.deferToChild,
       child: Container(
-        decoration: kGradientBoxDecoration,
+        decoration: widget.enabledBoxDecoration ?? kGradientBoxDecoration,
         child: AbsorbPointer(
           absorbing: true,
           child: widget.builder(
