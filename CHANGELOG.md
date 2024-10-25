@@ -1,3 +1,10 @@
+## 1.2.0 (2024-10-25)
+### New
+- Override default boxDecoration using customBoxDecoration (#7)
+### Fixed
+- Handle properly platforms without localeName
+
+
 ## 1.1.0 (2024-10-06)
 ### New
 - Language fetching improvements
