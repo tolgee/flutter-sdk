@@ -4,6 +4,14 @@ import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
 import 'package:tolgee/src/ui/translation_pop_up.dart';
 
+@visibleForTesting
+String formatMessage(String pattern, Map<String, Object> args, String locale) {
+  // intl's MessageFormat rejects whitespace between the last plural/select case and
+  // the closing brace, which is how Tolgee stores them: `{n, plural,\none {…}\n}`.
+  final normalized = pattern.replaceAll(RegExp(r'\}\s+\}'), '}}');
+  return MessageFormat(normalized, locale: locale).format(args);
+}
+
 typedef TranslationGetter = String Function(
   String key, [
   Map<String, Object>? args,
@@ -97,7 +105,8 @@ class _TranslationWidgetState extends State<TranslationWidget> {
     if (args == null) {
       return result;
     }
-    return MessageFormat(result).format(args);
+    final locale = TolgeeTranslationsStrategy.instance.currentLanguage;
+    return formatMessage(result, args, locale?.toLanguageTag() ?? 'en');
   }
 
   @override
