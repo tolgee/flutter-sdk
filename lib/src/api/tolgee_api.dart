@@ -27,8 +27,9 @@ class TolgeeApi {
       },
     );
 
-    final body =
-        TolgeeAllProjectLanguagesResponse.fromJsonString(response.body);
+    final body = TolgeeAllProjectLanguagesResponse.fromJsonString(
+      utf8.decode(response.bodyBytes),
+    );
     return body.languages;
   }
 
@@ -127,7 +128,7 @@ class TolgeeApi {
     );
     final updateTranslationsResponse =
         UpdateTranslationsResponse.fromJsonString(
-      response.body,
+      utf8.decode(response.bodyBytes),
     );
     return updateTranslationsResponse.model;
   }
