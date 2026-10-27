@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:tolgee/src/translations/language_tags.dart';
+
 /// Represents language in Tolgee project
 class TolgeeProjectLanguage {
   /// Language name in English
@@ -14,6 +18,9 @@ class TolgeeProjectLanguage {
 
   /// Whether this language is base language of the project
   final bool base;
+
+  /// The Flutter locale for [tag], with its script and region
+  Locale get locale => localeFromTag(tag);
 
   /// Creates new instance of [TolgeeProjectLanguage]
   const TolgeeProjectLanguage({

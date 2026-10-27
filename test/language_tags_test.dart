@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tolgee/src/api/tolgee_project_language.dart';
 import 'package:tolgee/src/translations/language_tags.dart';
 
 void main() {
@@ -36,5 +39,12 @@ void main() {
     for (final tag in ['en', 'pt-BR', 'zh-Hant', 'zh-Hant-TW', 'es-419']) {
       expect(localeFromTag(tag).toLanguageTag(), tag);
     }
+  });
+
+  test('gives a project language its locale', () {
+    const language =
+        TolgeeProjectLanguage(name: 'Portuguese', tag: 'pt-BR', base: false);
+
+    expect(language.locale, const Locale('pt', 'BR'));
   });
 }
