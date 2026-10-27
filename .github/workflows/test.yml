@@ -15,11 +15,19 @@ jobs:
         with:
           channel: stable
 
-      - run: flutter pub get
+      - name: Test tolgee
+        working-directory: packages/tolgee
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
 
-      - run: flutter analyze --no-fatal-infos
-
-      - run: flutter test
+      - name: Test tolgee_in_context
+        working-directory: packages/tolgee_in_context
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
 
       - name: Test release notes script
         run: node --test .github/scripts/release-notes.test.mjs
