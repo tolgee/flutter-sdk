@@ -27,7 +27,7 @@ class TolgeeConfig {
 
   @override
   String toString() {
-    return 'TolgeeConfig(apiKey: $apiKey, apiUrl: $apiUrl)';
+    return 'TolgeeConfig(apiUrl: $apiUrl)';
   }
 
   @override
