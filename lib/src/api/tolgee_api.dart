@@ -21,11 +21,18 @@ class TolgeeApi {
     required TolgeeConfig config,
   }) async {
     final response = await get(
-      Uri.parse('${config.apiUrl}/projects/languages'),
+      Uri.parse('${config.apiUrl}/projects/languages?size=1000'),
       headers: {
         'X-Api-Key': config.apiKey,
       },
     );
+
+    if (response.statusCode != 200) {
+      TolgeeLogger.error(
+        'Failed to fetch project languages: HTTP ${response.statusCode}',
+      );
+      return [];
+    }
 
     final body = TolgeeAllProjectLanguagesResponse.fromJsonString(
       utf8.decode(response.bodyBytes),

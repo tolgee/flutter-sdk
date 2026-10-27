@@ -29,9 +29,9 @@ String normalizeLanguageCode(String languageCode) {
 }
 
 /// The project language to start with: the requested one if the project has it,
-/// otherwise the base language.
+/// otherwise the base language. Without known languages, the requested one.
 @visibleForTesting
-String? selectStartLanguage(
+String selectStartLanguage(
   List<TolgeeProjectLanguage> languages,
   String requested,
 ) {
@@ -39,7 +39,8 @@ String? selectStartLanguage(
   final match = languages.firstWhereOrNull((l) => l.tag == requestedTag);
   if (match != null) return match.tag;
   return (languages.firstWhereOrNull((l) => l.base) ?? languages.firstOrNull)
-      ?.tag;
+          ?.tag ??
+      requestedTag;
 }
 
 /// Flutter falls back to the first supported locale, so the base language goes first.
@@ -169,10 +170,6 @@ class TolgeeRemoteTranslations extends ChangeNotifier
       currentLanguage ?? PlatformDispatcher.instance.locale.toLanguageTag(),
     );
     TolgeeLogger.debug('selectedLanguage: $selectedLanguage');
-    if (selectedLanguage == null) {
-      TolgeeLogger.warning('The Tolgee project has no languages');
-      return;
-    }
 
     TolgeeRemoteTranslations.instance.setCurrentLanguage(Locale(selectedLanguage));
     TolgeeRemoteTranslations.instance.notifyListeners();

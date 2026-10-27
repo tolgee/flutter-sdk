@@ -26,4 +26,8 @@ void main() {
   test('lists the base language first', () {
     expect(baseLanguageFirst(languages).map((l) => l.tag), ['en', 'de', 'pl']);
   });
+
+  test('uses the requested language when languages are unknown', () {
+    expect(selectStartLanguage([], 'pl_PL'), 'pl');
+  });
 }
