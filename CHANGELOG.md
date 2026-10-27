@@ -1,3 +1,14 @@
+## 1.2.1 (2026-10-27)
+### Fixed
+- Plurals created in Tolgee crashed the widget, and plural forms always followed English rules
+- Language flags and saved non-ASCII translations were garbled
+- Apps could start in the first language by tag (e.g. German) instead of the base language. On the web this happened every time
+- A translation that isn't a valid ICU message crashed the widget. It now shows as raw text
+- Projects with more than 20 languages lost all languages after the first 20
+### Changed
+- Numbers in plurals and parameters use the current language's format, e.g. `1.000` in German instead of `1,000`
+
+
 ## 1.2.0 (2024-10-25)
 ### New
 - Override default boxDecoration using customBoxDecoration (#7)
