@@ -134,7 +134,7 @@ void main() {
     expect(fileReads, 0);
   });
 
-  test('shows keys when the CDN fails and fallbackOnFail is off', () async {
+  test('leaves out a language the CDN failed to load', () async {
     final loader = TolgeeLoader(
       cdnUrl: cdn,
       availableLanguages: ['en'],
@@ -142,7 +142,7 @@ void main() {
       files: () => files(['en']),
     );
 
-    expect(await loader.load({'en'}), {'en': <String, String>{}});
+    expect(await loader.load({'en'}), isEmpty);
   });
 
   test('uses bundled files when the CDN fails and fallbackOnFail is on',
@@ -169,6 +169,37 @@ void main() {
       'de': {'k': 'file de'},
     });
     expect(fileReads, 1);
+  });
+
+  test('keeps using the API after a failed load once languages came from it',
+      () async {
+    var failTexts = false;
+    final loader = TolgeeLoader(
+      dev: dev,
+      client: MockClient((request) async {
+        if (request.url.path == '/v2/projects/languages') {
+          return json({
+            '_embedded': {
+              'languages': [
+                {'name': 'English', 'tag': 'en', 'base': true},
+              ],
+            },
+          });
+        }
+        return failTexts
+            ? json({}, 500)
+            : json({
+                'en': {'k': 'api en'}
+              });
+      }),
+      files: () => files(['en']),
+    );
+    await loader.loadLanguages();
+
+    failTexts = true;
+
+    expect(await loader.load({'en'}), isEmpty);
+    expect(loader.usesApi, isTrue);
   });
 
   group('base language without the API', () {

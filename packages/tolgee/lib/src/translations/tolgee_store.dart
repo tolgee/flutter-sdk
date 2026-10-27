@@ -67,7 +67,11 @@ class TolgeeStore extends ChangeNotifier {
     final loader = _loader;
     final current = _currentLanguage;
     if (loader == null || current == null) return;
-    _texts.addAll(await loader.load({current, baseLanguage}));
+    final loaded = await loader.load({current, baseLanguage});
+    // Edits in the dialog can touch any language, so the others load fresh
+    // when the app switches to them.
+    _texts.removeWhere((tag, _) => tag != current && tag != baseLanguage);
+    _texts.addAll(loaded);
     notifyListeners();
   }
 

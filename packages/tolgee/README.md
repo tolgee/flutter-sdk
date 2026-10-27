@@ -52,8 +52,13 @@ TranslationWidget(
 ```
 
 Texts use the ICU message format, including plurals. Change the language with
-`Tolgee.setCurrentLocale(locale)`. `Tolgee.languages` lists the project languages, with names
-and flags when the texts come from the Tolgee API.
+`Tolgee.setCurrentLocale(locale)`, then rebuild the widget that creates `MaterialApp` (for example
+with `setState`), so it picks up the new `locale`. `Tolgee.languages` lists the project
+languages, with names and flags when the texts come from the Tolgee API.
+
+The builder of `TranslationWidget` must return a normal widget, not `Expanded`, `Flexible`,
+`Positioned` or a sliver. In dev builds with `tolgee_in_context`, the editor wraps what the
+builder returns. Put `Expanded` around the `TranslationWidget` instead.
 
 ## Where texts come from
 
@@ -108,6 +113,9 @@ await Tolgee.init(
 );
 ```
 
+With no languages at all (no API, no bundled files, no `availableLanguages`), `Tolgee.init`
+throws a `StateError`.
+
 The base language defaults to `en` if it's available, otherwise to the first language.
 
 ## Languages and fallbacks
@@ -116,6 +124,12 @@ The base language defaults to `en` if it's available, otherwise to the first lan
   (`pt-PT` → `pt`), then the base language.
 - A text missing in the current language comes from the base language, then from the default
   value (`Tolgee.translate(key: 'a', defaultValue: 'A')`), then the key name is shown.
+
+## Logging
+
+Tolgee prints warnings and errors in debug builds, for example when the API or the CDN can't be
+reached. Change the level with `TolgeeLogger.setLogLevel(LogLevel.debug)`, or send the messages
+elsewhere with `TolgeeLogger.setLog(...)`.
 
 ## In-context editing
 

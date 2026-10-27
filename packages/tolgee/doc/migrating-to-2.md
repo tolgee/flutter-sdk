@@ -43,6 +43,10 @@ A key passed in code is still compiled into the app, so don't keep it there.
 Use the CDN, bundled files or both. See
 [Where texts come from](../README.md#where-texts-come-from).
 
+If your 1.x release app loaded texts only from the API, it now has no languages, and
+`Tolgee.init` throws a `StateError` before `runApp`. Bundle your translations in `lib/tolgee/`,
+or set up the CDN with `availableLanguages`, before you release with 2.0.
+
 The CDN no longer needs an API key. 1.x read the language list from the API even with
 `useCDN: true`. 2.0 takes it from the bundled file names or from `availableLanguages`.
 
@@ -51,10 +55,18 @@ The CDN no longer needs an API key. 1.x read the language list from the API even
 1.x cut tags to the language part (`pt-BR` → `pt`). 2.0 keeps the project's tags, so bundled
 files are named after them (`pt-BR.json`), and `supportedLocales` has `Locale('pt', 'BR')`.
 
+## `TranslationWidget` builders
+
+In dev builds with `tolgee_in_context`, the editor wraps what the builder returns. A builder that
+returns `Expanded`, `Flexible`, `Positioned` or a sliver throws there. Put those around the
+`TranslationWidget` instead.
+
 ## Smaller changes
 
 - `Tolgee.init` completes with the texts loaded, so the first frame already shows them.
 - A text missing in the current language comes from the base language.
 - New: `Tolgee.languages` (names and flags from the API), `Tolgee.reload()`, and
   `TolgeeProjectLanguage.locale`.
+- Warnings and errors are logged in debug builds by default. 1.x logged nothing unless you set a
+  level. `LogLevel` is now exported from `package:tolgee/tolgee.dart`.
 - Dart 3.3 or newer is required.

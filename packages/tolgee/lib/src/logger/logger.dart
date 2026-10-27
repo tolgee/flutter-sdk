@@ -3,7 +3,7 @@ import 'package:tolgee/src/logger/log_level.dart';
 
 /// Logger for Tolgee SDK
 class TolgeeLogger {
-  LogLevel _logLevel = LogLevel.none;
+  LogLevel _logLevel = LogLevel.warning;
 
   /// Log function
   ///
@@ -25,7 +25,7 @@ class TolgeeLogger {
 
   /// Sets log level
   ///
-  /// Default is [LogLevel.none]
+  /// Default is [LogLevel.warning]
   static void setLogLevel(LogLevel logLevel) {
     TolgeeLogger._instance._logLevel = logLevel;
   }

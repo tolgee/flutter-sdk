@@ -106,6 +106,8 @@ class TolgeeLoader {
     return tags.contains('en') ? 'en' : tags.first;
   }
 
+  /// The texts of [tags]. A language that failed to load is left out, so the
+  /// caller keeps what it had and can try again later.
   Future<Translations> load(Set<String> tags) async {
     final dev = this.dev;
     if (dev != null && _usesApi) {
@@ -113,32 +115,37 @@ class TolgeeLoader {
         final texts = await fetchTranslations(_client, dev, tags);
         return {for (final tag in tags) tag: texts[tag] ?? {}};
       } catch (e) {
-        _stopUsingApi(e);
+        TolgeeLogger.warning(
+            'Failed to load translations from the Tolgee API: $e');
+        return {};
       }
     }
 
     final cdnUrl = this.cdnUrl;
     if (cdnUrl != null) {
       final texts = await Future.wait(tags.map((tag) => _fromCdn(cdnUrl, tag)));
-      return Map.fromIterables(tags, texts);
+      return {
+        for (final (index, tag) in tags.indexed)
+          if (texts[index] case final loaded?) tag: loaded,
+      };
     }
 
     final bundled = await _bundledFiles();
     return {for (final tag in tags) tag: bundled[tag] ?? {}};
   }
 
-  Future<Map<String, String>> _fromCdn(String cdnUrl, String tag) async {
+  Future<Map<String, String>?> _fromCdn(String cdnUrl, String tag) async {
     try {
       return await fetchCdnTranslations(_client, cdnUrl, tag);
     } catch (e) {
       if (!fallbackOnFail) {
         TolgeeLogger.error('Failed to load $tag from the CDN: $e');
-        return {};
+        return null;
       }
       TolgeeLogger.warning(
         'Failed to load $tag from the CDN, using bundled files: $e',
       );
-      return (await _bundledFiles())[tag] ?? {};
+      return (await _bundledFiles())[tag];
     }
   }
 }
