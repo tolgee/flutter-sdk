@@ -17,4 +17,27 @@ void main() {
     expect(formatMessage(pattern, {'count': 3}, 'pl'), '3 przedmioty');
     expect(formatMessage(pattern, {'count': 5}, 'pl'), '5 przedmiotów');
   });
+
+  test('falls back to English rules for locales intl has no data for', () {
+    const pattern = '{count, plural, one {# item} other {# items}}';
+
+    expect(formatMessage(pattern, {'count': 1}, 'eo'), '1 item');
+  });
+
+  test('returns the raw translation when it is not a valid message', () {
+    const pattern = '{count, plural, one {# item}';
+
+    expect(formatMessage(pattern, {'count': 1}, 'en'), pattern);
+  });
+
+  test('keeps spaces that are part of the text', () {
+    const pattern =
+        '{count, plural, one {Price: {price} } other {Prices: {price} }}';
+
+    expect(
+      formatMessage(pattern, {'count': 1, 'price': 'X'}, 'en'),
+      'Price: X ',
+    );
+    expect(formatMessage("Use '} }' to close", {}, 'en'), 'Use } } to close');
+  });
 }

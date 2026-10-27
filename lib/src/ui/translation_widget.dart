@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/message_format.dart';
+import 'package:tolgee/src/logger/logger.dart';
 import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
 import 'package:tolgee/src/ui/translation_list_pop_up.dart';
 import 'package:tolgee/src/ui/translation_pop_up.dart';
 
+// intl's MessageFormat rejects whitespace between the last plural/select case and
+// the closing brace, which is how Tolgee stores them: `{n, plural,\none {…}\n}`.
+final _lineBreakBeforeClosingBrace = RegExp(r'\}\s*\n\s*\}');
+
 @visibleForTesting
 String formatMessage(String pattern, Map<String, Object> args, String locale) {
-  // intl's MessageFormat rejects whitespace between the last plural/select case and
-  // the closing brace, which is how Tolgee stores them: `{n, plural,\none {…}\n}`.
-  final normalized = pattern.replaceAll(RegExp(r'\}\s+\}'), '}}');
-  return MessageFormat(normalized, locale: locale).format(args);
+  final normalized = pattern.replaceAll(_lineBreakBeforeClosingBrace, '}}');
+  // intl has no number data for some locales (e.g. eo, ckb, yi) and throws for them.
+  for (final candidate in {locale, 'en'}) {
+    try {
+      return MessageFormat(normalized, locale: candidate).format(args);
+    } catch (e) {
+      TolgeeLogger.warning('Failed to format "$pattern" in $candidate: $e');
+    }
+  }
+  return pattern;
 }
 
 typedef TranslationGetter = String Function(
