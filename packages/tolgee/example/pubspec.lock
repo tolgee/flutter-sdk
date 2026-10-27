@@ -239,7 +239,7 @@ packages:
   tolgee_in_context:
     dependency: "direct main"
     description:
-      path: "../tolgee_in_context"
+      path: "../../tolgee_in_context"
       relative: true
     source: path
     version: "2.0.0"

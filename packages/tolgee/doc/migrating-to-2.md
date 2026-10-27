@@ -15,7 +15,7 @@ TolgeeInContext.install();
 await Tolgee.init();
 ```
 
-See the [`tolgee_in_context` README](../tolgee_in_context/README.md) for how to edit on each
+See the [`tolgee_in_context` README](https://pub.dev/packages/tolgee_in_context) for how to edit on each
 platform.
 
 ## Pass the API key with `--dart-define`, not in code

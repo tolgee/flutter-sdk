@@ -33,7 +33,7 @@ dependencies:
   tolgee:
     path: ../
   tolgee_in_context:
-    path: ../tolgee_in_context
+    path: ../../tolgee_in_context
 
 
   # The following adds the Cupertino Icons font to your application.
