@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
@@ -26,6 +26,32 @@ String normalizeLanguageCode(String languageCode) {
 
   // Join the parts with a hyphen
   return language;
+}
+
+/// The project language to start with: the requested one if the project has it,
+/// otherwise the base language. Without known languages, the requested one.
+@visibleForTesting
+String selectStartLanguage(
+  List<TolgeeProjectLanguage> languages,
+  String requested,
+) {
+  final requestedTag = normalizeLanguageCode(requested);
+  final match = languages.firstWhereOrNull((l) => l.tag == requestedTag);
+  if (match != null) return match.tag;
+  return (languages.firstWhereOrNull((l) => l.base) ?? languages.firstOrNull)
+          ?.tag ??
+      requestedTag;
+}
+
+/// Flutter falls back to the first supported locale, so the base language goes first.
+@visibleForTesting
+List<TolgeeProjectLanguage> baseLanguageFirst(
+  List<TolgeeProjectLanguage> languages,
+) {
+  return [
+    ...languages.where((l) => l.base),
+    ...languages.where((l) => !l.base),
+  ];
 }
 
 class TolgeeRemoteTranslations extends ChangeNotifier
@@ -134,23 +160,15 @@ class TolgeeRemoteTranslations extends ChangeNotifier
       config: config,
     );
     TolgeeLogger.debug('allProjectLanguages: $allProjectLanguages');
-    TolgeeRemoteTranslations.instance._projectLanguages =
-        Map.fromEntries(allProjectLanguages.map((e) => MapEntry(e.tag, e)));
-
-    var selectedLanguage = null;
-    try {
-      selectedLanguage = normalizeLanguageCode(
-          currentLanguage ?? Platform.localeName
-      );
-    } catch (e) {
-      TolgeeLogger.warning('Failed to get current language: $e');
-    }
-    var found = allProjectLanguages.firstWhereOrNull(
-      (element) => element.tag == selectedLanguage,
+    TolgeeRemoteTranslations.instance._projectLanguages = Map.fromEntries(
+      baseLanguageFirst(allProjectLanguages).map((e) => MapEntry(e.tag, e)),
     );
-    if (found == null && allProjectLanguages.isNotEmpty) {
-      selectedLanguage = allProjectLanguages.first.tag;
-    }
+
+    // dart:io's Platform.localeName throws on the web.
+    final selectedLanguage = selectStartLanguage(
+      allProjectLanguages,
+      currentLanguage ?? PlatformDispatcher.instance.locale.toLanguageTag(),
+    );
     TolgeeLogger.debug('selectedLanguage: $selectedLanguage');
 
     TolgeeRemoteTranslations.instance.setCurrentLanguage(Locale(selectedLanguage));
