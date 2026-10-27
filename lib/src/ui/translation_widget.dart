@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/message_format.dart';
 import 'package:tolgee/src/logger/logger.dart';
 import 'package:tolgee/src/translations/tolgee_store.dart';
+import 'package:tolgee/src/ui/tolgee_editor.dart';
 
 // intl's MessageFormat rejects whitespace between the last plural/select case and
 // the closing brace, which is how Tolgee stores them: `{n, plural,\none {…}\n}`.
@@ -63,7 +64,23 @@ class _TranslationWidgetState extends State<TranslationWidget> {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: TolgeeStore.instance,
-      builder: (context, _) => widget.builder(context, _translate),
+      builder: (context, _) {
+        final keys = <String>{};
+        final child = widget.builder(context, (key, [args]) {
+          keys.add(key);
+          return _translate(key, args);
+        });
+        final editor = TolgeeEditor.installed;
+        if (editor == null || tolgeeDevConfig == null || keys.isEmpty) {
+          return child;
+        }
+        return editor.wrap(
+          context,
+          child: child,
+          keys: keys,
+          decoration: widget.enabledBoxDecoration,
+        );
+      },
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:tolgee/src/sdk/dev_config.dart';
 import 'package:tolgee/src/translations/language_tags.dart';
 import 'package:tolgee/src/translations/tolgee_loader.dart';
 import 'package:tolgee/src/translations/tolgee_store.dart';
+import 'package:tolgee/src/ui/tolgee_editor.dart';
 
 class Tolgee {
   const Tolgee._();
@@ -86,7 +87,7 @@ class Tolgee {
   }
 
   /// Toggle highlight of Tolgee widgets.
-  static void highlightTolgeeWidgets() {}
+  static void highlightTolgeeWidgets() => TolgeeEditor.installed?.toggle();
 
   static String translate({required String key, String? defaultValue}) {
     return TolgeeStore.instance.translate(key) ?? defaultValue ?? key;
