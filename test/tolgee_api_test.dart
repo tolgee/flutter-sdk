@@ -8,36 +8,7 @@ import 'package:tolgee/src/api/tolgee_config.dart';
 import 'package:tolgee/src/api/tolgee_project_language.dart';
 
 void main() {
-  const config = TolgeeConfig(apiKey: 'key', apiUrl: 'https://tolgee.test/v2');
-
-  test('requests all project languages in one page', () async {
-    Uri? requested;
-    final client = MockClient((request) async {
-      requested = request.url;
-      return Response('{"_embedded": {"languages": []}}', 200);
-    });
-
-    await runWithClient(
-      () => TolgeeApi.getAllProjectLanguages(config: config),
-      () => client,
-    );
-
-    expect(requested?.queryParameters['size'], '1000');
-  });
-
-  test('returns no languages when the request fails', () async {
-    final client =
-        MockClient((_) async => Response('{"code": "unauthenticated"}', 401));
-
-    final languages = await runWithClient(
-      () => TolgeeApi.getAllProjectLanguages(config: config),
-      () => client,
-    );
-
-    expect(languages, isEmpty);
-  });
-
-  group('2.0 client', () {
+  group('API client', () {
     const dev = TolgeeConfig(apiKey: 'key', apiUrl: 'https://tolgee.test');
 
     Response json(String body, [int status = 200]) => Response.bytes(

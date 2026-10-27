@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/message_format.dart';
 import 'package:tolgee/src/logger/logger.dart';
-import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
-import 'package:tolgee/src/ui/translation_list_pop_up.dart';
-import 'package:tolgee/src/ui/translation_pop_up.dart';
+import 'package:tolgee/src/translations/tolgee_store.dart';
 
 // intl's MessageFormat rejects whitespace between the last plural/select case and
 // the closing brace, which is how Tolgee stores them: `{n, plural,\none {…}\n}`.
@@ -49,93 +47,23 @@ class TranslationWidget extends StatefulWidget {
 }
 
 class _TranslationWidgetState extends State<TranslationWidget> {
-  final Set<String> _keys = {};
-
-  Widget _buildEnabledWidget(BuildContext context) {
-    const opacity = 0.2;
-    final kGradientBoxDecoration = BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.center,
-        end: const Alignment(-0.2, -0.5),
-        stops: const [0.0, 0.5, 0.5, 1],
-        colors: [
-          Colors.orangeAccent.withOpacity(opacity),
-          Colors.orangeAccent.withOpacity(opacity),
-          Colors.black.withOpacity(opacity),
-          Colors.black.withOpacity(opacity),
-        ],
-        tileMode: TileMode.repeated,
-      ),
-    );
-
-    return GestureDetector(
-      onTap: () {
-        if (_keys.isEmpty) {
-          return;
-        }
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              if (_keys.length == 1) {
-                return TranslationPopUp(
-                  backIcon: TranslationPopUpBackIcon.close,
-                  translationModel: TolgeeTranslationsStrategy.instance
-                      .translationForKeys(_keys)
-                      .toList()
-                      .first,
-                );
-              } else {
-                return TranslationListPopUp(
-                    translationModels: TolgeeTranslationsStrategy.instance
-                        .translationForKeys(_keys)
-                        .toList());
-              }
-            },
-          ),
-        );
-      },
-      behavior: HitTestBehavior.deferToChild,
-      child: Container(
-        decoration: widget.enabledBoxDecoration ?? kGradientBoxDecoration,
-        child: AbsorbPointer(
-          absorbing: true,
-          child: widget.builder(
-            context,
-            (key, [args]) {
-              _keys.add(key);
-              return _translate(key, args);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
   String _translate(String key, [Map<String, Object>? args]) {
-    final result = TolgeeTranslationsStrategy.instance.translate(key) ?? key;
+    final result = TolgeeStore.instance.translate(key) ?? key;
     if (args == null) {
       return result;
     }
-    final locale = TolgeeTranslationsStrategy.instance.currentLanguage;
-    return formatMessage(result, args, locale?.toLanguageTag() ?? 'en');
+    return formatMessage(
+      result,
+      args,
+      TolgeeStore.instance.currentLanguage ?? 'en',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-        listenable: TolgeeTranslationsStrategy.instance,
-        builder: (BuildContext context, Widget? child) {
-          final isTranslationEnabled =
-              TolgeeTranslationsStrategy.instance.isTranslationEnabled;
-
-          if (isTranslationEnabled) {
-            return _buildEnabledWidget(context);
-          } else {
-            return widget.builder(
-              context,
-              (key, [args]) => _translate(key, args),
-            );
-          }
-        });
+      listenable: TolgeeStore.instance,
+      builder: (context, _) => widget.builder(context, _translate),
+    );
   }
 }

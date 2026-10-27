@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tolgee/src/l10n/tolgee_localization_delegate.dart';
-import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
+import 'package:tolgee/src/translations/tolgee_store.dart';
 import 'package:tolgee/tolgee.dart';
 
 class TolgeeLocalization {
@@ -28,6 +28,6 @@ class TolgeeLocalization {
   }
 
   String? translate(String key) {
-    return TolgeeTranslationsStrategy.instance.translate(key);
+    return TolgeeStore.instance.translate(key);
   }
 }

@@ -1,60 +1,84 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tolgee/src/api/tolgee_project_language.dart';
 import 'package:tolgee/src/l10n/tolgee_localization.dart';
-import 'package:tolgee/src/translations/tolgee_translation_strategy.dart';
+import 'package:tolgee/src/logger/logger.dart';
+import 'package:tolgee/src/sdk/dev_config.dart';
+import 'package:tolgee/src/translations/language_tags.dart';
+import 'package:tolgee/src/translations/tolgee_loader.dart';
+import 'package:tolgee/src/translations/tolgee_store.dart';
 
 class Tolgee {
   const Tolgee._();
 
-  /// Initializes Tolgee
-  /// [apiKey] is the Tolgee API key
-  /// [apiUrl] is the Tolgee API URL
-  /// If [apiKey] and [apiUrl] are not provided,
-  /// Tolgee will be initialized in static mode.
-  /// If [apiKey] and [apiUrl] are provided,
-  /// Tolgee will be initialized in remote mode.
-  /// In remote mode, translations will be fetched from Tolgee Cloud.
-  /// In static mode, translations will be fetched from local files.
+  /// Initializes Tolgee and loads the texts of the start language.
+  ///
+  /// Dev builds load from the Tolgee API when `TOLGEE_API_KEY` and
+  /// `TOLGEE_API_URL` are passed with `--dart-define`. Otherwise texts come
+  /// from the CDN when [useCDN] and [cdnUrl] are set, or from the JSON files
+  /// bundled in `lib/tolgee/`. With [fallbackOnFail], a failed CDN request
+  /// falls back to the bundled files.
+  ///
+  /// [apiKey] and [apiUrl] are kept for 1.x apps and ignored in release builds.
+  /// Without the API, [availableLanguages] (default: the bundled file names)
+  /// lists the languages and [baseLanguage] picks the base one.
   static Future<void> init({
     String? apiKey,
     String? apiUrl,
     String? cdnUrl,
-    String? currentLanguage,
     bool useCDN = false,
+    bool fallbackOnFail = false,
+    List<String>? availableLanguages,
+    String? baseLanguage,
+    String? currentLanguage,
   }) async {
-    apiKey != null && apiUrl != null
-        ? await TolgeeTranslationsStrategy.initRemote(
-            currentLanguage: currentLanguage,
-            apiKey: apiKey,
-            apiUrl: apiUrl,
-            cdnUrl: cdnUrl,
-            useCDN: useCDN,
-          )
-        : await TolgeeTranslationsStrategy.initStatic(currentLanguage);
-  }
-
-  /// Returns the base language
-  static Locale get baseLocale {
-    return Locale(
-      TolgeeTranslationsStrategy.instance.allProjectLanguages.values
-          .firstWhere((element) => element.base)
-          .tag,
+    if (useCDN && cdnUrl == null) {
+      TolgeeLogger.warning('useCDN is set without cdnUrl, the CDN is not used');
+    }
+    final loader = TolgeeLoader(
+      dev: resolveDevConfig(
+        apiKey: apiKey,
+        apiUrl: apiUrl,
+        fromEnvironment: devConfigFromEnvironment(),
+        release: kReleaseMode,
+      ),
+      cdnUrl: useCDN ? cdnUrl : null,
+      fallbackOnFail: fallbackOnFail,
+      availableLanguages: availableLanguages,
+      baseLanguage: baseLanguage,
+    );
+    await TolgeeStore.instance.init(
+      loader,
+      requestedLanguage:
+          currentLanguage ?? PlatformDispatcher.instance.locale.toLanguageTag(),
     );
   }
 
+  /// Returns the base language
+  static Locale get baseLocale =>
+      localeFromTag(TolgeeStore.instance.baseLanguage);
+
   /// Returns the current locale
-  static Locale? get currentLocale =>
-      TolgeeTranslationsStrategy.instance.currentLanguage;
+  static Locale? get currentLocale {
+    final current = TolgeeStore.instance.currentLanguage;
+    return current == null ? null : localeFromTag(current);
+  }
 
   /// Sets the current locale
-  static Future<void> setCurrentLocale(Locale locale) async {
-    await TolgeeTranslationsStrategy.instance.setCurrentLanguage(locale);
-  }
+  static Future<void> setCurrentLocale(Locale locale) =>
+      TolgeeStore.instance.setLanguage(locale.toLanguageTag());
 
-  /// Returns list of supported locales
-  static Iterable<Locale> get supportedLocales {
-    return TolgeeTranslationsStrategy.instance.allProjectLanguages.keys
-        .map((e) => Locale(e));
-  }
+  /// Returns list of supported locales, base language first
+  static Iterable<Locale> get supportedLocales =>
+      TolgeeStore.instance.languages.map((l) => localeFromTag(l.tag));
+
+  /// The project languages, base language first. Names and flags are only
+  /// known when loading from the Tolgee API.
+  static List<TolgeeProjectLanguage> get languages =>
+      TolgeeStore.instance.languages;
+
+  /// Loads the texts of the current and base language again.
+  static Future<void> reload() => TolgeeStore.instance.reload();
 
   /// Returns TolgeeLocalizationDelegate
   static Iterable<LocalizationsDelegate<dynamic>> get localizationDelegates {
@@ -62,13 +86,9 @@ class Tolgee {
   }
 
   /// Toggle highlight of Tolgee widgets.
-  static void highlightTolgeeWidgets() {
-    TolgeeTranslationsStrategy.instance.toggleTranslationEnabled();
-  }
+  static void highlightTolgeeWidgets() {}
 
   static String translate({required String key, String? defaultValue}) {
-    String? translatedValue =
-        TolgeeTranslationsStrategy.instance.translate(key);
-    return translatedValue ?? defaultValue ?? key;
+    return TolgeeStore.instance.translate(key) ?? defaultValue ?? key;
   }
 }
