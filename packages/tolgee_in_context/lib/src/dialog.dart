@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -20,16 +21,16 @@ Future<void> showTolgeeDialog(
   required Set<String> keys,
   Rect? anchor,
 }) async {
-  final requestJson = jsonEncode({
-    'keys': keys.toList(),
-    if (anchor != null)
-      'rect': {
-        'left': anchor.left,
-        'top': anchor.top,
-        'width': anchor.width,
-        'height': anchor.height,
-      },
-  });
+  String requestJson(Rect? anchor) => jsonEncode({
+        'keys': keys.toList(),
+        if (anchor != null)
+          'rect': {
+            'left': anchor.left,
+            'top': anchor.top,
+            'width': anchor.width,
+            'height': anchor.height,
+          },
+      });
   final initJson = jsonEncode({
     'apiUrl': config.apiUrl,
     'apiKey': config.apiKey,
@@ -39,7 +40,7 @@ Future<void> showTolgeeDialog(
     try {
       await openInHostPage(
         initJson: initJson,
-        requestJson: requestJson,
+        requestJson: requestJson(anchor),
         onMessage: (raw) =>
             handleBridgeMessage(raw, onReady: () {}, onClosed: () {}),
       );
@@ -48,19 +49,29 @@ Future<void> showTolgeeDialog(
     }
     return;
   }
+  final safeArea = MediaQueryData.fromView(View.of(context)).padding;
   tolgeeDialogOpen.value = true;
   try {
-    await Navigator.of(context).push(
+    // The root navigator, so the WebView covers the whole app also with nested
+    // navigators (tabs, go_router shell routes).
+    await Navigator.of(context, rootNavigator: true).push(
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) =>
-            _TolgeeDialog(initJson: initJson, requestJson: requestJson),
+        pageBuilder: (_, __, ___) => _TolgeeDialog(
+          initJson: initJson,
+          requestJson: requestJson(anchorInWebView(anchor, safeArea)),
+        ),
       ),
     );
   } finally {
     tolgeeDialogOpen.value = false;
   }
 }
+
+/// [anchor] in the coordinates of the WebView, which sits inside [safeArea].
+@visibleForTesting
+Rect? anchorInWebView(Rect? anchor, EdgeInsets safeArea) =>
+    anchor?.shift(Offset(-safeArea.left, -safeArea.top));
 
 @visibleForTesting
 Future<void> handleBridgeMessage(
@@ -104,10 +115,22 @@ class _TolgeeDialog extends StatefulWidget {
 
 class _TolgeeDialogState extends State<_TolgeeDialog> {
   late final WebViewController _controller;
+  Timer? _readyTimeout;
+
+  void _close() {
+    _readyTimeout?.cancel();
+    if (mounted) Navigator.of(context).pop();
+  }
 
   @override
   void initState() {
     super.initState();
+    // The WebView blocks the app until tolgee-js is ready, so a hanging load
+    // must not leave it there.
+    _readyTimeout = Timer(const Duration(seconds: 20), () {
+      TolgeeLogger.error('The Tolgee editor did not load within 20 seconds');
+      _close();
+    });
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
     // webview_flutter can't make the WebView transparent on macOS (it throws),
@@ -120,11 +143,11 @@ class _TolgeeDialogState extends State<_TolgeeDialog> {
         'TolgeeBridge',
         onMessageReceived: (message) => handleBridgeMessage(
           message.message,
-          onReady: () =>
-              _controller.runJavaScript('tolgeeOpen(${widget.requestJson})'),
-          onClosed: () {
-            if (mounted) Navigator.of(context).pop();
+          onReady: () {
+            _readyTimeout?.cancel();
+            _controller.runJavaScript('tolgeeOpen(${widget.requestJson})');
           },
+          onClosed: _close,
         ),
       )
       ..setNavigationDelegate(NavigationDelegate(
@@ -133,6 +156,12 @@ class _TolgeeDialogState extends State<_TolgeeDialog> {
       ))
       ..loadFlutterAsset(
           'packages/tolgee_in_context/assets/tolgee_dialog.html');
+  }
+
+  @override
+  void dispose() {
+    _readyTimeout?.cancel();
+    super.dispose();
   }
 
   @override

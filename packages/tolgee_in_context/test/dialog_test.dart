@@ -1,3 +1,4 @@
+import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -68,5 +69,16 @@ void main() {
     await handle('[]');
 
     expect(ready + closed, 0);
+  });
+
+  test('moves the anchor into the WebView, which sits inside the safe area',
+      () {
+    const anchor = Rect.fromLTWH(20, 100, 200, 40);
+
+    expect(
+      anchorInWebView(anchor, const EdgeInsets.only(left: 10, top: 59)),
+      const Rect.fromLTWH(10, 41, 200, 40),
+    );
+    expect(anchorInWebView(null, EdgeInsets.zero), isNull);
   });
 }
