@@ -1,0 +1,5 @@
+.dart_tool/
+build/
+pubspec.lock
+# Only for developing inside this repo
+pubspec_overrides.yaml

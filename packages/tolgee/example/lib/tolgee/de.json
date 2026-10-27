@@ -1,0 +1,12 @@
+{
+  "action-not-available": "In dieser Demo nicht verfügbar",
+  "add-item-add-button": "Einfügen",
+  "add-item-input-placeholder": "Neuer Eintrag",
+  "app-title": "Was mitnehmen",
+  "delete-item-button": "Löschen",
+  "empty-list": "Noch nichts einzupacken. Füge oben deinen ersten Eintrag hinzu.",
+  "items-count": "{count, plural,\none {# Sache zum Einpacken}\nother {# Sachen zum Einpacken}\n}",
+  "language-menu-tooltip": "Sprache ändern",
+  "send-via-email": "Per E-Mail senden",
+  "share-button": "Teilen"
+}

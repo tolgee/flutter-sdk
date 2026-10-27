@@ -1,0 +1,12 @@
+{
+  "action-not-available": "Non disponible dans cette démo",
+  "add-item-add-button": "Ajouter",
+  "add-item-input-placeholder": "Nouvel élément de la liste",
+  "app-title": "Quoi emporter",
+  "delete-item-button": "Supprimer",
+  "empty-list": "Rien à emporter pour l’instant. Ajoutez votre premier élément ci-dessus.",
+  "items-count": "{count, plural,\none {# objet à emporter}\nmany {# d’objets à emporter}\nother {# objets à emporter}\n}",
+  "language-menu-tooltip": "Changer de langue",
+  "send-via-email": "Envoyer par e-mail",
+  "share-button": "Partager"
+}
