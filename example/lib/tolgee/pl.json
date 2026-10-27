@@ -1,5 +1,12 @@
 {
-  "button" : "Zrob",
-  "subtitle" : "Czesc {name}",
-  "title" : "Nazwa aplikacji 2"
+  "action-not-available": "Niedostępne w tej wersji demo",
+  "add-item-add-button": "Dodaj",
+  "add-item-input-placeholder": "Nowa pozycja",
+  "app-title": "Co spakować",
+  "delete-item-button": "Usuń",
+  "empty-list": "Na razie nic do spakowania. Dodaj pierwszą rzecz powyżej.",
+  "items-count": "{count, plural,\none {# przedmiot do spakowania}\nfew {# przedmioty do spakowania}\nmany {# przedmiotów do spakowania}\nother {# przedmiotu do spakowania}\n}",
+  "language-menu-tooltip": "Zmień język",
+  "send-via-email": "Wyślij e-mailem",
+  "share-button": "Udostępnij"
 }
