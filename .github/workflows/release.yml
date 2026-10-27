@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ['Test']
+    branches: ['main']
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency: release
+
+jobs:
+  main:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      # The tag must be pushed with the PAT, tags pushed with GITHUB_TOKEN don't trigger the Publish workflow
+      - uses: actions/checkout@v7
+        with:
+          token: '${{ secrets.TOLGEE_MACHINE_PAT }}'
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Set git globals
+        run: |
+          git config --local user.email "machine@tolgee.io"
+          git config --local user.name "Tolgee Machine"
+
+      - name: Get next version by semantic-release
+        id: version
+        run: |
+          npx -y -p semantic-release@24 -p @semantic-release/exec@7 -p conventional-changelog-conventionalcommits@8 semantic-release --dry-run
+          echo "VERSION=$(cat .VERSION 2>/dev/null)" >> $GITHUB_OUTPUT
+
+      - name: Release
+        if: ${{ steps.version.outputs.VERSION != '' }}
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0)
+          sed -i "s/^version: .*/version: $VERSION/" pubspec.yaml
+          node .github/scripts/release-notes.mjs "$PREV_TAG" "$VERSION" > "$RUNNER_TEMP/notes.md"
+          git commit -am "release: v$VERSION"
+          git tag "v$VERSION"
+          git push --atomic origin HEAD:main "v$VERSION"
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
