@@ -27,7 +27,7 @@ You can import the four JSON files in Tolgee.
 flutter run --dart-define-from-file=tolgee.env
 ```
 
-On the web and macOS, hold Alt (Option) and click a text. On iOS and Android, tap the Tolgee
+On the web and macOS, hold Alt (Option on a Mac) and click a text. On iOS and Android, tap the Tolgee
 bubble, then a text.
 
 ## Release build

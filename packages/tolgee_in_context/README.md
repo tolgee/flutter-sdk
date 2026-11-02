@@ -40,7 +40,7 @@ Editing works only while texts come from the Tolgee API. In release builds,
 
 | Platform | How |
 |---|---|
-| Web, macOS | Hold Alt (Option) and move the mouse over a text to see a red border. Alt + click opens the editor. |
+| Web, macOS | Hold Alt (Option on a Mac) and move the mouse over a text to see a red border. Alt + click (Option + click) opens the editor. |
 | iOS, Android | Tap the Tolgee bubble (bottom left, you can drag it) to switch editing on. Every text gets a red border, and a tap opens the editor. Tap the bubble again to stop. |
 | Windows, Linux | Not available, the app works as usual. |
 
