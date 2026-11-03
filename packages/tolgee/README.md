@@ -121,7 +121,8 @@ The base language defaults to `en` if it's available, otherwise to the first lan
 ## Languages and fallbacks
 
 - The app starts in the device language if the project has it. Otherwise it tries a shorter tag
-  (`pt-PT` → `pt`), then the base language.
+  (`pt-PT` → `pt`), then the same language in another region (`en-GB` → `en-US`), then the base
+  language. Pass `currentLanguage` to `Tolgee.init` to start in a language of your choice.
 - A text missing in the current language comes from the base language, then from the default
   value (`Tolgee.translate(key: 'a', defaultValue: 'A')`), then the key name is shown.
 

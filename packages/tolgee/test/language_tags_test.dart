@@ -23,6 +23,14 @@ void main() {
     expect(matchLanguage(tags, 'zh-Hant-TW'), 'zh-Hant');
   });
 
+  test('falls back to the same language in another region', () {
+    expect(matchLanguage(['en-US', 'de'], 'en-GB'), 'en-US');
+  });
+
+  test('prefers the matching script over another one', () {
+    expect(matchLanguage(['zh-Hans', 'zh-Hant'], 'zh-Hant-TW'), 'zh-Hant');
+  });
+
   test('returns null when nothing matches', () {
     expect(matchLanguage(tags, 'ja-JP'), isNull);
   });

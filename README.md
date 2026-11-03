@@ -34,8 +34,8 @@ click a text in the running app and edit it in the same editor that Tolgee's Jav
 - **Safe release builds.** Release builds load texts from the Tolgee CDN, from files bundled with
   the app, or both. They never contain your API key or the editor.
 - **ICU message format**, including plurals and parameters.
-- **Language fallbacks.** The app starts in the device language (`pt-BR`, then `pt`, then the base
-  language), and a missing text falls back to the base language.
+- **Language fallbacks.** The app starts in the device language (`pt-BR`, then `pt`, then another
+  `pt` region, then the base language), and a missing text falls back to the base language.
 
 ## Getting started
 

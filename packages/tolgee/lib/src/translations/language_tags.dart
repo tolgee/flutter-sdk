@@ -4,8 +4,11 @@ import 'package:collection/collection.dart';
 
 String _canonical(String tag) => tag.replaceAll('_', '-').toLowerCase();
 
+String _languagePart(String tag) => _canonical(tag).split('-').first;
+
 /// The project tag for [requested]: the exact tag, otherwise the longest
-/// matching prefix (`zh-Hant-TW` → `zh-Hant` → `zh`).
+/// matching prefix (`zh-Hant-TW` → `zh-Hant` → `zh`), otherwise the first tag
+/// of the same language (`en-GB` → `en-US`).
 String? matchLanguage(List<String> tags, String requested) {
   var candidate = _canonical(requested);
   while (candidate.isNotEmpty) {
@@ -14,7 +17,9 @@ String? matchLanguage(List<String> tags, String requested) {
     final cut = candidate.lastIndexOf('-');
     candidate = cut == -1 ? '' : candidate.substring(0, cut);
   }
-  return null;
+  return tags.firstWhereOrNull(
+    (tag) => _languagePart(tag) == _languagePart(requested),
+  );
 }
 
 String selectStartLanguage(List<String> tags, String requested, String base) {
