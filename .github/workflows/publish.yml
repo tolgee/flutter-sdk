@@ -20,6 +20,24 @@ jobs:
         with:
           channel: stable
 
-      - run: flutter pub get
+      - name: Publish tolgee
+        working-directory: packages/tolgee
+        run: flutter pub publish --force
 
-      - run: flutter pub publish --force
+      # tolgee_in_context depends on the tolgee version just published, so it waits until
+      # pub.dev serves it. Automated publishing only works for a package that exists on
+      # pub.dev, so its first release is published by hand.
+      - name: Publish tolgee_in_context
+        working-directory: packages/tolgee_in_context
+        run: |
+          if ! curl -sf https://pub.dev/api/packages/tolgee_in_context > /dev/null; then
+            echo "::warning::tolgee_in_context is not on pub.dev yet, publish its first version by hand"
+            exit 0
+          fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          for i in $(seq 1 30); do
+            curl -sf "https://pub.dev/api/packages/tolgee/versions/$VERSION" > /dev/null && break
+            sleep 10
+          done
+          rm pubspec_overrides.yaml
+          flutter pub publish --force

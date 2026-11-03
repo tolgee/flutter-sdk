@@ -47,8 +47,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PREV_TAG=$(git describe --tags --abbrev=0)
-          sed -i "s/^version: .*/version: $VERSION/" pubspec.yaml
-          node .github/scripts/release-notes.mjs "$PREV_TAG" "$VERSION" > "$RUNNER_TEMP/notes.md"
+          sed -i "s/^version: .*/version: $VERSION/" packages/tolgee/pubspec.yaml packages/tolgee_in_context/pubspec.yaml
+          sed -i "s/^  tolgee: .*/  tolgee: ^$VERSION/" packages/tolgee_in_context/pubspec.yaml
+          node .github/scripts/release-notes.mjs "$PREV_TAG" "$VERSION" \
+            packages/tolgee/CHANGELOG.md packages/tolgee_in_context/CHANGELOG.md > "$RUNNER_TEMP/notes.md"
           git commit -am "release: v$VERSION"
           git tag "v$VERSION"
           git push --atomic origin HEAD:main "v$VERSION"

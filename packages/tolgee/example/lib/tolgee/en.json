@@ -1,0 +1,12 @@
+{
+  "action-not-available": "Not available in this demo",
+  "add-item-add-button": "Add",
+  "add-item-input-placeholder": "New list item",
+  "app-title": "What To Pack",
+  "delete-item-button": "Delete",
+  "empty-list": "Nothing to pack yet. Add your first item above.",
+  "items-count": "{count, plural,\none {# item to pack}\nother {# items to pack}\n}",
+  "language-menu-tooltip": "Change language",
+  "send-via-email": "Send via e-mail",
+  "share-button": "Share"
+}

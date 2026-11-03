@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { collectNotes, formatChangelog, formatRelease } from './release-notes.mjs';
+import { collectNotes, formatChangelog, formatRelease, formatUnchanged } from './release-notes.mjs';
 
 const prBody = `## Release notes
 <!-- Written for SDK users. -->
@@ -56,9 +56,14 @@ test('formats the changelog entry and the GitHub release', () => {
   const notes = new Map([['Fixed', ['- A']], ['New', ['- B']]]);
   assert.equal(formatChangelog('1.3.0', '2026-10-27', notes), '## 1.3.0 (2026-10-27)\n### Fixed\n- A\n### New\n- B\n');
   assert.equal(
+    formatUnchanged('1.3.0', '2026-10-27'),
+    '## 1.3.0 (2026-10-27)\nNo changes in this package. Released with the same version as the other Tolgee Flutter packages.\n',
+  );
+  assert.equal(
     formatRelease('v1.2.1', '1.3.0', '2026-10-27', notes),
     '# [1.3.0](https://github.com/tolgee/flutter-sdk/compare/v1.2.1...v1.3.0) (2026-10-27)\n\n' +
-      'Available on [pub.dev](https://pub.dev/packages/tolgee/versions/1.3.0)\n\n' +
+      'Available on pub.dev: [tolgee](https://pub.dev/packages/tolgee/versions/1.3.0), ' +
+      '[tolgee_in_context](https://pub.dev/packages/tolgee_in_context/versions/1.3.0)\n\n' +
       '## Fixed\n- A\n## New\n- B\n',
   );
 });

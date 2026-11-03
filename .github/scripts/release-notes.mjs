@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const DEFAULT_HEADING = { feat: 'New', fix: 'Fixed', perf: 'Changed' };
@@ -45,13 +46,18 @@ const render = (notes, level) =>
 
 export const formatChangelog = (version, date, notes) => `## ${version} (${date})\n${render(notes, '###')}`;
 
+export const formatUnchanged = (version, date) =>
+  `## ${version} (${date})\nNo changes in this package. Released with the same version as the other Tolgee Flutter packages.\n`;
+
 export const formatRelease = (prevTag, version, date, notes) =>
   `# [${version}](https://github.com/tolgee/flutter-sdk/compare/${prevTag}...v${version}) (${date})\n\n` +
-  `Available on [pub.dev](https://pub.dev/packages/tolgee/versions/${version})\n\n` +
+  `Available on pub.dev: [tolgee](https://pub.dev/packages/tolgee/versions/${version}), ` +
+  `[tolgee_in_context](https://pub.dev/packages/tolgee_in_context/versions/${version})\n\n` +
   render(notes, '##');
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const [prevTag, version] = process.argv.slice(2);
+  // Both packages are released together, so each changelog gets the same entry unless its package didn't change.
+  const [prevTag, version, ...changelogs] = process.argv.slice(2);
   const log = execFileSync('git', ['log', '--reverse', '--format=%s%x1f%b%x1e', `${prevTag}..HEAD`], { encoding: 'utf8' });
   const commits = log
     .split('\x1e')
@@ -62,6 +68,10 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     });
   const notes = collectNotes(commits);
   const date = new Date().toISOString().slice(0, 10);
-  writeFileSync('CHANGELOG.md', `${formatChangelog(version, date, notes)}\n\n${readFileSync('CHANGELOG.md', 'utf8')}`);
+  for (const changelog of changelogs.length ? changelogs : ['CHANGELOG.md']) {
+    const unchanged = execFileSync('git', ['diff', '--name-only', prevTag, 'HEAD', '--', dirname(changelog)], { encoding: 'utf8' }) === '';
+    const entry = unchanged ? formatUnchanged(version, date) : formatChangelog(version, date, notes);
+    writeFileSync(changelog, `${entry}\n\n${readFileSync(changelog, 'utf8')}`);
+  }
   process.stdout.write(formatRelease(prevTag, version, date, notes));
 }
